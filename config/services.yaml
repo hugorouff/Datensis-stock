@@ -1,0 +1,28 @@
+parameters:
+    app.allow_registration: '%env(bool:ALLOW_REGISTRATION)%'
+    # 2FA e-mail via Brevo est CONSERVEE mais desactivee temporairement.
+    # La reactiver plus tard en remplacant false par true puis cache:clear.
+    app.vault_2fa_enabled: false
+    app.default_mailer_from: 'noreply@example.invalid'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            bool $allowRegistration: '%app.allow_registration%'
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Security\TwoFactorSecretBox:
+        arguments:
+            $appSecret: '%env(APP_SECRET)%'
+
+    App\Security\EmailOtpSender:
+        arguments:
+            $brevoDsn: '%env(MAILER_DSN)%'
+            $from: '%env(default:app.default_mailer_from:MAILER_FROM)%'

@@ -1,0 +1,46 @@
+framework:
+    rate_limiter:
+        send_open:
+            policy: sliding_window
+            limit: 10
+            interval: '15 minutes'
+        vault_email_otp_send:
+            policy: sliding_window
+            limit: 3
+            interval: '15 minutes'
+        vault_email_otp_verify:
+            policy: sliding_window
+            limit: 5
+            interval: '15 minutes'
+        vault_extension_login:
+            policy: sliding_window
+            limit: 5
+            interval: '15 minutes'
+        ds_admin_unlock:
+            policy: sliding_window
+            limit: 5
+            interval: '15 minutes'
+        ds_invite_email:
+            policy: sliding_window
+            limit: 3
+            interval: '1 hour'
+        ds_invite_verify:
+            policy: sliding_window
+            limit: 8
+            interval: '15 minutes'
+        ds_share_email:
+            policy: sliding_window
+            limit: 3
+            interval: '15 minutes'
+        ds_share_verify:
+            policy: sliding_window
+            limit: 6
+            interval: '15 minutes'
+        ds_share_lookup:
+            policy: sliding_window
+            limit: 30
+            interval: '1 hour'
+        ds_share_suggest:
+            policy: sliding_window
+            limit: 60
+            interval: '15 minutes'

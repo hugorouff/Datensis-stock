@@ -1,0 +1,20 @@
+/* Datensis Stock: partages nominatifs */
+.ds-account-share-list {display:grid;gap:12px;margin-top:16px}
+.ds-account-share-card {border:1px solid rgba(0,119,139,.20);border-radius:14px;padding:16px;background:var(--surface,#fff);display:grid;gap:10px;min-width:0}
+.ds-account-share-card strong {overflow-wrap:anywhere}
+.ds-account-share-card p {margin:0;color:var(--muted,#567);overflow-wrap:anywhere}
+.ds-account-share-actions {display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ds-account-share-actions select {max-width:100%;min-width:0;flex:1 1 210px}
+.ds-account-share-card .btn {max-width:100%}
+#account-share-form .form-columns > * {min-width:0}
+#account-share-target {width:100%;max-width:100%}
+@media (max-width:720px) {#share-verify-box .form-columns {display:flex;flex-direction:column} .ds-account-share-actions>* {flex:1 1 100%}}
+
+/* Autocompletion de destinataires : accessible et adaptee au mobile. */
+.ds-recipient-field {position:relative;min-width:0;display:grid;gap:6px}
+.ds-recipient-field > input {width:100%;min-width:0}
+.ds-recipient-suggestions {z-index:35;position:absolute;top:calc(100% - 25px);left:0;right:0;max-height:230px;overflow:auto;display:grid;padding:5px;background:var(--surface,#fff);border:1px solid #82C4A8;border-radius:12px;box-shadow:0 12px 24px rgba(0,60,80,.18)}
+.ds-recipient-suggestions[hidden] {display:none}
+.ds-recipient-option {border:0;background:transparent;color:inherit;display:block;width:100%;min-height:42px;text-align:left;padding:10px 12px;border-radius:8px;overflow-wrap:anywhere;cursor:pointer;font:inherit}
+.ds-recipient-option:hover,.ds-recipient-option:focus-visible,.ds-recipient-option[aria-selected="true"] {background:rgba(0,119,139,.12);outline:2px solid transparent}
+#account-share-search-status {display:block;min-height:1.2em}

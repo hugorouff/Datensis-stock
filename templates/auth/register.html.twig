@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+{% block title %}Créer un compte{% endblock %}
+{% block body %}
+<div class="auth-layout ds-auth-layout">
+    <section class="auth-intro ds-auth-intro">
+        <div class="ds-auth-halo" aria-hidden="true"><span>✧</span></div>
+        <div class="auth-brand"><span class="brand-icon ds-auth-logo">DS</span><span>Datensis <strong>Stock</strong></span></div>
+        <h1>Votre espace privé, <span>à vous seul.</span></h1>
+        <p>Un seul mot de passe principal protège votre compte et déverrouille le coffre lors de la connexion.</p>
+        <div class="auth-points"><span>◈ &nbsp; Un compte = un coffre personnel</span><span>◈ &nbsp; Aucun mot de passe stocké en clair</span><span>◈ &nbsp; Code et données séparés de Datensis</span></div>
+    </section>
+    <section class="auth-panel">
+        <div class="auth-card">
+            <div class="mobile-brand">DS · Datensis Stock</div>
+            <div class="eyebrow">Rejoindre l'espace</div>
+            <h2>Créer un compte</h2>
+            <p class="muted">Un seul mot de passe principal sert à vous connecter et à déverrouiller votre coffre. Ne le perdez pas.</p>
+            <form action="{{ path('app_register') }}" method="post" class="form-stack" autocomplete="off">
+                <label>Adresse e-mail<input name="email" type="email" required autocomplete="off"></label>
+                <label>Mot de passe (12 caractères minimum)<input name="password" type="password" minlength="12" required autocomplete="off"></label>
+                <label>Confirmer le mot de passe<input name="confirm" type="password" minlength="12" required autocomplete="off"></label>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('register') }}">
+                <button type="submit" class="btn btn-primary btn-full">Créer mon compte</button>
+            </form>
+            <p class="auth-bottom">Déjà inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+        </div>
+    </section>
+</div>
+{% endblock %}

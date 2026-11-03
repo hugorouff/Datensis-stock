@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+{% block title %}Connexion{% endblock %}
+{% block body %}
+<div class="auth-layout ds-auth-layout">
+    <section class="auth-intro ds-auth-intro">
+        <div class="ds-auth-halo" aria-hidden="true"><span>✧</span></div>
+        <div class="auth-brand"><span class="brand-icon ds-auth-logo">DS</span><span>Datensis <strong>Stock</strong></span></div>
+        <h1>Vos accès, <span>en lieu sûr.</span></h1>
+        <p>Un coffre-fort pour vos identifiants et notes confidentielles, accessible depuis votre navigateur.</p>
+        <div class="auth-points"><span>◈ &nbsp; Chiffrement dans le navigateur</span><span>◈ &nbsp; Coffre personnel et indépendant</span><span>◈ &nbsp; Interface adaptée au mobile</span></div>
+    </section>
+    <section class="auth-panel">
+        <div class="auth-card">
+            <div class="mobile-brand">DS · Datensis Stock</div>
+            <div class="eyebrow">Bienvenue</div>
+            <h2>Se connecter à Datensis Stock</h2>
+            <p class="muted">Un seul mot de passe. Les administrateurs accèdent directement à la gestion ; les autres utilisateurs ouvrent leur coffre personnel.</p>
+            {% if error %}<div class="inline-error">Identifiants invalides ou tentative limitée. Réessayez.</div>{% endif %}
+            <form id="login-form" action="{{ path('app_login') }}" method="post" class="form-stack" autocomplete="off">
+                <label>Adresse e-mail<input name="_username" value="{{ last_username }}" type="email" required autocomplete="off" autofocus></label>
+                <label>Mot de passe de connexion<input name="_password" type="password" required autocomplete="off"></label>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <button type="submit" class="btn btn-primary btn-full">Se connecter</button>
+            </form>
+            {# La 2FA Brevo reste codee. Elle n'apparait que lorsque le drapeau est reactive. #}
+            {% if vault_2fa_enabled %}
+            <div id="login-twofactor" hidden><p class="muted" id="login-mail-status" role="status"></p>
+                <p class="muted">Deuxième étape : saisissez le code à 6 chiffres reçu par e-mail.</p>
+                <form id="login-otp-form" class="form-stack" autocomplete="off"><label>Code 2FA<input id="login-otp" autocomplete="one-time-code" inputmode="numeric" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required></label><button type="submit" class="btn btn-primary btn-full">Valider la connexion</button></form><button type="button" class="btn btn-full" id="login-otp-resend">Renvoyer un code</button>
+            </div>
+            {% endif %}
+            <p id="login-js-error" class="inline-error" role="alert" hidden></p>
+            {% if allow_registration %}<p class="auth-bottom">Pas encore de compte ? <a href="{{ path('app_register') }}">Créer un compte</a></p>{% endif %}
+            <p class="auth-hint">Pour accéder à Datensis Stock depuis les autres sites, utilisez <strong>l’extension de barre d’outils Chrome / Edge</strong>. Elle s’ouvre sous l’icône épinglée, sans installer une application de bureau.</p>
+            <p class="auth-hint">Pour les utilisateurs du coffre, le même mot de passe déverrouille les données chiffrées. Lors de la première connexion avec un coffre ancien, son ancienne phrase secrète sera nécessaire une seule fois.</p>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}<script defer src="{{ asset('assets/login-unified.js') }}?v=20261029-sharefix1"></script>{% endblock %}

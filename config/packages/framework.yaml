@@ -1,0 +1,10 @@
+framework:
+    secret: '%env(APP_SECRET)%'
+    http_method_override: false
+    session:
+        name: ML2C_VAULT_SESSID
+        handler_id: null
+        cookie_secure: auto
+        cookie_httponly: true
+        cookie_samesite: lax
+    csrf_protection: true

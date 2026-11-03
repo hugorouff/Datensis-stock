@@ -1,0 +1,282 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mon coffre{% endblock %}
+{% block head %}<meta name="vault-csrf" content="{{ csrf_token('vault_api') }}"><meta name="twofa-csrf" content="{{ csrf_token('2fa') }}">{% endblock %}
+{% block body %}
+<div class="bw-layout" id="app-shell" data-otp-enabled="{{ vault_2fa_enabled ? '1' : '0' }}" data-account-email="{{ app.user.userIdentifier|lower|e('html_attr') }}" data-account-id="{{ app.user.id|e('html_attr') }}">
+    <aside class="bw-sidebar" id="sidebar">
+        <a class="bw-brand ds-brand" href="{{ path('app_vault') }}"><span class="bw-logo ds-monogram">DS<span class="ds-monogram-pulse"></span></span><span><strong>Datensis Stock</strong><small>ESPACE PERSONNEL CHIFFRÉ</small></span></a>
+        <div class="ds-sidebar-intro"><span class="ds-sidebar-eyebrow">VOTRE ESPACE</span><strong>Un endroit sûr pour l'essentiel.</strong><span>Vos accès, vos partages, vos outils.</span></div>
+        <nav class="bw-nav ds-nav-primary" aria-label="Navigation principale">
+            <a href="{{ path('app_vault') }}" data-view="vault" class="bw-nav-link"><span class="nav-icon" aria-hidden="true">◈</span><span>Mon coffre</span></a>
+            <a href="{{ path('app_send') }}" data-view="send" class="bw-nav-link"><span class="nav-icon" aria-hidden="true">↗</span><span>Send</span></a>
+            <a href="{{ path('app_shares_page') }}" data-view="shares" class="bw-nav-link"><span class="nav-icon" aria-hidden="true">♧</span><span>Partages entre comptes</span></a>
+        </nav>
+        {% if is_granted('ROLE_ADMIN') %}<nav class="bw-nav ds-nav-primary" aria-label="Administration"><a href="{{ path('app_admin') }}" data-view="admin" class="bw-nav-link"><span class="nav-icon" aria-hidden="true">⚑</span><span>Administration</span></a></nav>{% endif %}
+        <div class="nav-title">BOÎTE À OUTILS</div>
+        <nav class="bw-nav" aria-label="Outils">
+            <a href="{{ path('app_security_center') }}" data-view="security" class="bw-nav-link"><span class="nav-icon" aria-hidden="true">◎</span><span>Ma sécurité</span></a>
+            <a href="{{ path('app_generator') }}" data-view="generator" class="bw-nav-link"><span class="nav-icon" aria-hidden="true">✧</span><span>Générateur</span></a>
+            <a href="{{ path('app_transfer') }}" data-view="transfer" class="bw-nav-link"><span class="nav-icon" aria-hidden="true">⇅</span><span>Importer / Exporter</span></a>
+            <a href="{{ path('app_vault_settings') }}" data-view="settings" class="bw-nav-link"><span class="nav-icon" aria-hidden="true">⚙</span><span>Réglages</span></a>
+        </nav>
+        <div class="ds-sidebar-spacer"></div>
+        <div class="ds-security-note"><span class="ds-note-symbol">✦</span><span>Vos données restent chiffrées sur cet appareil.</span></div>
+        <div class="bw-side-foot">
+            <div class="user-summary"><span class="user-photo">{{ app.user.userIdentifier|first|upper }}</span><span class="user-address">{{ app.user.userIdentifier }}</span></div>
+            <button type="button" id="lock-btn" class="foot-button">⌑ &nbsp; Verrouiller le coffre</button>
+            <form method="post" action="{{ path('app_logout') }}"><input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}"><button type="submit" class="foot-button">⇥ &nbsp; Se déconnecter</button></form>
+        </div>
+    </aside>
+    <div class="nav-backdrop" id="sidebar-backdrop"></div>
+    <div class="bw-right">
+        <header class="bw-topbar"><div class="topbar-left"><button id="menu-btn" class="mobile-toggle" type="button" aria-label="Ouvrir le menu">☰</button><span class="topbar-title">DATENSIS <b>STOCK</b></span><span class="topbar-divider"></span><span id="breadcrumb">Mon coffre</span></div><div class="topbar-actions"><span class="pill-security"><span class="ds-secure-dot"></span> Chiffrement local actif</span><button id="top-lock" title="Verrouiller" type="button" class="icon-top">♙</button><span class="top-avatar">{{ app.user.userIdentifier|first|upper }}</span></div></header>
+        <main class="bw-content">
+            <section class="unlock-page" id="lock-surface">
+                <div class="lock-card"><div class="shield-graphic">♢</div><div class="eyebrow" id="lock-eyebrow">COFFRE VERROUILLÉ</div><h1 id="lock-title">Déverrouiller votre coffre</h1><p id="lock-description">Votre phrase secrète déchiffre le coffre sur votre appareil.</p>
+                    <form id="unlock-form"><label for="vault-passphrase">Mot de passe principal</label><input id="vault-passphrase" type="password" autocomplete="new-password" minlength="12" required placeholder="Saisissez votre mot de passe principal"><div id="unlock-otp-wrap" hidden><label for="unlock-otp">Code reçu par e-mail</label><input id="unlock-otp" autocomplete="one-time-code" inputmode="numeric" placeholder="000000" maxlength="6" pattern="[0-9]{6}"><button type="button" id="unlock-otp-send" class="btn outline">Envoyer un code par e-mail</button></div><div id="confirm-wrap" hidden><label for="vault-confirm">Confirmer la phrase secrète</label><input id="vault-confirm" type="password" autocomplete="new-password" minlength="12"></div><button type="submit" class="btn primary full" id="unlock-button" disabled>Déverrouiller</button></form>
+                    <p id="lock-error" class="error-alert" role="alert" hidden></p><small id="lock-advice" class="lock-warning">Le mot de passe de connexion ouvre automatiquement le coffre. Quitter cet onglet ou passer sur une autre page le verrouille ; les rubriques internes restent accessibles. Après un verrouillage, ressaisissez ce même mot de passe.</small>
+                </div>
+            </section>
+            <div id="app-unlocked" hidden>
+                <div class="quick-tools" id="quick-tools" role="toolbar" aria-label="Actions rapides Datensis Stock">
+                    <strong>Actions rapides</strong>
+                    <button id="quick-new" type="button" class="btn primary">+ Identifiant</button>
+                    <button id="quick-passwords" type="button" class="btn outline">Mes accès</button>
+                    <button id="quick-generate" type="button" class="btn outline">Générateur</button>
+                    <button id="quick-security" type="button" class="btn outline">Centre de sécurité</button>
+                    
+                    <button id="quick-send" type="button" class="btn outline">Send</button>
+                    <label for="quick-search">Recherche</label>
+                    <input id="quick-search" type="search" placeholder="Rechercher un accès..." autocomplete="off">
+                </div>
+                <section id="view-vault" data-panel="vault" hidden>
+                    <div class="ds-vault-hero">
+                        <div class="ds-hero-art" aria-hidden="true"><span class="ds-hero-orbit orbit-a"></span><span class="ds-hero-orbit orbit-b"></span><span class="ds-hero-core">✧</span></div>
+                        <div class="ds-hero-content"><div class="ds-eyebrow">VOTRE ESPACE PRIVÉ <span class="ds-eyebrow-line"></span> DONNÉES CHIFFRÉES</div><h1 id="section-title">Mon coffre</h1><p>Les bonnes informations, au bon endroit. Retrouvez et gérez vos accès en toute simplicité.</p></div>
+                        <button class="btn outline ds-add-btn" id="new-folder" type="button">+ Créer un dossier</button><button class="btn primary ds-add-btn" id="new-item" type="button">＋ &nbsp; Ajouter un élément</button>
+                    </div>
+                    <div class="vault-grid">
+                        <div class="vault-list-panel">
+                            <div class="list-toolbar"><label class="search-field"><span>⌕</span><input id="search-input" type="search" placeholder="Rechercher dans mon coffre…" autocomplete="off"></label><label class="ds-filter-control" for="vault-filter"><span>Afficher</span><select id="vault-filter" aria-label="Filtrer mon coffre"><option value="all">Tout mon coffre</option><option value="favorite">Mes favoris</option><option value="login">Identifiants</option><option value="card">Cartes bancaires</option><option value="identity">Identités</option><option value="note">Notes sécurisées</option><option value="trash">Corbeille</option></select></label><label class="ds-filter-control" for="folder-filter"><span>Entreprise / dossier</span><select id="folder-filter"><option value="">Tous les dossiers</option></select></label><select id="sort-select" aria-label="Trier"><option value="updated">Récents</option><option value="name">Nom A-Z</option></select></div>
+                            <div class="list-head"><strong id="results-count">Éléments</strong><span>Organisés pour vous</span></div>
+                            <div id="items-list" class="vault-list" aria-live="polite"></div>
+                        </div>
+                        <div class="vault-details" id="item-details"><div class="detail-empty"><div class="blank-icon">▣</div><h3>Sélectionnez un élément</h3><p>Les informations de votre coffre s'afficheront ici.</p></div></div>
+                    </div>
+                </section>
+                <section id="view-cockpit" data-panel="cockpit" hidden>
+                    <div class="view-heading"><div><div class="bread">Datensis Stock / Pilotage cabinet</div><h1>Cockpit des accès</h1><p class="muted">Suivi des comptes par dossier client, contrôles de sécurité et dates de rotation. Analyse effectuée localement après déchiffrement.</p></div><button type="button" class="btn primary" id="cockpit-add">＋ &nbsp; Nouvel accès client</button></div>
+                    <div class="cockpit-banner"><span class="cockpit-banner-icon">✦</span><div><strong>Un pilotage conçu pour le cabinet</strong><p>Les dossiers, responsables, criticités et échéances sont chiffrés avec chaque fiche. Aucune donnée de cette page n'est envoyée à un service externe.</p></div></div>
+                    <div class="cockpit-stats" aria-label="Indicateurs de sécurité">
+                        <div class="cockpit-stat"><span>Accès suivis</span><strong id="stat-total">0</strong><small>Identifiants actifs</small></div>
+                        <div class="cockpit-stat"><span>Dossiers clients</span><strong id="stat-clients">0</strong><small>Avec au moins un accès</small></div>
+                        <div class="cockpit-stat"><span>Alertes à traiter</span><strong id="stat-alerts">0</strong><small>Détection locale indicative</small></div>
+                        <div class="cockpit-stat"><span>Rotations à venir</span><strong id="stat-due">0</strong><small>Dans les 30 prochains jours</small></div>
+                    </div>
+                    <div class="cockpit-columns">
+                        <section class="cockpit-card"><div class="cockpit-card-head"><div><small>CONTRÔLES</small><h2>Plan d'actions prioritaire</h2></div><span class="subtle">Aucune analyse distante</span></div><div id="cockpit-alerts" class="cockpit-alerts"></div></section>
+                        <section class="cockpit-card"><div class="cockpit-card-head"><div><small>PORTEFEUILLE</small><h2>Suivi par dossier client</h2></div></div><div id="cockpit-clients" class="cockpit-clients"></div></section>
+                    </div>
+                    <div class="cockpit-card cockpit-calendar"><div class="cockpit-card-head"><div><small>PLANIFICATION</small><h2>Renouvellements et vérifications</h2></div><button id="cockpit-export" class="btn outline" type="button">Exporter le planning (CSV local)</button></div><div id="cockpit-rotations"></div><p class="help-text">Ce planning est manuel : définir la prochaine rotation ne modifie pas automatiquement le mot de passe d'un service tiers.</p></div>
+                </section>
+                <section id="view-actions" data-panel="actions" hidden>
+                    <div class="view-heading"><div><div class="bread">Datensis Stock / Organisation</div><h1>Centre d’actions</h1><p class="muted">Retrouvez les revues à effectuer, les dossiers à compléter et les accès critiques. Analyse locale des fiches déchiffrées.</p></div><button type="button" class="btn primary" id="actions-new">+ Nouvelle fiche</button></div>
+                    <div class="actions-metrics" aria-label="Synthèse des actions">
+                        <div class="actions-metric"><span>Accès suivis</span><strong id="actions-total">0</strong></div>
+                        <div class="actions-metric"><span>À vérifier</span><strong id="actions-pending">0</strong></div>
+                        <div class="actions-metric"><span>Échéances dépassées</span><strong id="actions-late">0</strong></div>
+                        <div class="actions-metric"><span>Sans responsable</span><strong id="actions-unowned">0</strong></div>
+                    </div>
+                    <div class="actions-two-cols">
+                        <section class="actions-card"><div class="actions-card-head"><div><small>LISTE DE TRAVAIL</small><h2>Fiches nécessitant une action</h2></div><select id="actions-filter" aria-label="Filtrer les actions"><option value="all">Toutes</option><option value="critical">Critiques</option><option value="late">En retard</option><option value="unowned">Sans responsable</option><option value="review">À revoir</option></select></div><div id="actions-queue" class="actions-scroll"></div><p class="actions-note">Les actions de revue sont déclaratives : elles ne modifient ni les accès sur les sites tiers ni leurs mots de passe.</p></section>
+                        <section class="actions-card"><div class="actions-card-head"><div><small>PORTEFEUILLE</small><h2>Suivi des entreprises</h2></div></div><div id="actions-clients" class="actions-scroll"></div></section>
+                        <section class="actions-card"><div class="actions-card-head"><div><small>ORGANISATION</small><h2>Étiquettes du coffre</h2></div></div><div id="actions-tags" class="actions-taglist"></div></section>
+                        <section class="actions-card"><div class="actions-card-head"><div><small>TRAÇABILITÉ LOCALE</small><h2>Dernières modifications</h2></div></div><div id="actions-activity" class="actions-scroll"></div><p class="actions-note">Historique indicatif des fiches, non certifié : ce n’est pas un journal d’audit serveur.</p></section>
+                    </div>
+                </section>
+                <section id="view-shares" data-panel="shares" hidden>
+                    <div class="view-heading"><div><div class="bread">Datensis Stock / Collaboration privée</div><h1>Partages entre comptes</h1><p class="muted">Donnez accès à un mot de passe ou à un dossier par l’adresse e-mail d’un compte Datensis Stock. Aucune URL publique à transmettre.</p></div></div>
+                    <div id="share-verify-box" class="tool-card settings-card" hidden>
+                        <h2>Confirmer votre adresse e-mail une seule fois</h2>
+                        <p>Les comptes existants peuvent être choisis immédiatement. Les clés nécessaires au chiffrement se créent automatiquement à la première ouverture du coffre du destinataire.</p>
+                        <div class="form-columns"><button type="button" class="btn outline" id="share-send-code">Recevoir mon code</button><label>Code à 6 chiffres<input type="text" id="share-code" maxlength="6" inputmode="numeric" autocomplete="one-time-code" placeholder="000000"></label><button type="button" class="btn primary" id="share-confirm-code">Vérifier mon e-mail</button></div>
+                        <small id="share-verify-state" aria-live="polite"></small>
+                    </div>
+                    <div class="tool-card settings-card">
+                        <h2>Accorder un accès nominatif</h2>
+                        <p>Choisissez tout compte utilisateur existant. Si son coffre n'a jamais été ouvert, la demande restera en attente et sera chiffrée dès qu'il l'aura initialisé et que vous ouvrirez à nouveau le vôtre. Le destinataire devra accepter le partage et pourra le classer dans <strong>ses</strong> dossiers. Accès en lecture seule et révocable.</p>
+                        <form id="account-share-form" class="form-stack">
+                            <div class="ds-recipient-field">
+                                <label for="account-share-email">Rechercher un utilisateur par e-mail</label>
+                                <input type="email" id="account-share-email" required maxlength="180" autocomplete="off" spellcheck="false" aria-autocomplete="list" aria-controls="account-share-suggestions" aria-expanded="false" aria-describedby="account-share-search-status" placeholder="Ex. : h.rou">
+                                <div id="account-share-suggestions" class="ds-recipient-suggestions" role="listbox" aria-label="Comptes disponibles" hidden></div>
+                                <small id="account-share-search-status" class="muted" role="status" aria-live="polite">Saisissez au moins 3 caractères pour rechercher un compte.</small>
+                            </div>
+                            <div class="form-columns"><label>Partager<select id="account-share-scope"><option value="entry">Un mot de passe</option><option value="folder">Un dossier (avec ses sous-dossiers)</option></select></label><label>Fiche ou dossier à partager<select id="account-share-target" required></select></label></div>
+                            <button class="btn primary" type="submit" id="account-share-submit">Envoyer une demande d’accès</button>
+                        </form>
+                    </div>
+                    <div class="tool-card settings-card"><h2>Accès que j’ai accordés</h2><p class="muted">Une révocation bloque la consultation future depuis Datensis Stock ; elle ne peut pas effacer un secret déjà copié.</p><div id="account-share-outgoing" class="ds-account-share-list"></div></div>
+                    <div class="tool-card settings-card"><h2>Demandes et accès reçus</h2><p class="muted">Acceptez uniquement les accès que vous attendez. Vous pourrez les retrouver dans « Mon coffre » sous votre propre dossier.</p><button type="button" id="account-share-refresh" class="btn outline">Actualiser les partages</button><p id="account-share-status" role="status" aria-live="polite" hidden></p><div id="account-share-incoming" class="ds-account-share-list"></div></div>
+                </section>
+                <section id="view-send" data-panel="send" hidden>
+                    <div class="view-heading"><div><div class="bread">Partage sécurisé</div><h1>Send</h1><p class="muted">Partagez un mot de passe enregistré, un texte ou un fichier à l’aide d’un lien chiffré temporaire.</p></div><div class="action-pair"><button class="btn outline" id="refresh-sends" type="button">↻ Actualiser</button><button class="btn primary" id="new-send" type="button">＋ &nbsp; Nouveau Send</button></div></div>
+                    <div class="info-banner"><span>♢</span><div><strong>Partage à durée limitée</strong><p>La clé de déchiffrement reste dans le fragment du lien. Le serveur n'y a pas accès. Les fichiers sont limités à 2 Mo dans cette version.</p></div></div>
+                    <div class="section-tabs"><button data-send-filter="all" class="selected" type="button">Tous les Send</button><button data-send-filter="text" type="button">Textes</button><button data-send-filter="file" type="button">Fichiers</button></div>
+                    <div class="table-surface"><div class="table-row table-head"><span>Nom</span><span>Statut</span><span>Expiration</span><span>Vues</span><span>Actions</span></div><div id="sends-list"></div></div>
+                </section>
+                <section id="view-security" data-panel="security" hidden>
+                    <div class="view-heading"><div><div class="bread">Datensis Stock / Prévention</div><h1>Centre de sécurité</h1><p class="muted">Diagnostic local, revue des accès et plans de rotation propres à votre cabinet. Aucune analyse n'est envoyée à un service tiers.</p></div><button type="button" id="security-refresh" class="btn outline">↻ Réanalyser</button></div>
+                    <div class="security-overview">
+                        <div class="security-score"><span>Indice indicatif de suivi</span><strong id="security-score">—</strong><small>Ce score n'est pas un audit de sécurité.</small></div>
+                        <div class="security-metric"><span>Accès à vérifier</span><strong id="security-issues">0</strong><small>Faibles, réutilisés, HTTP, etc.</small></div>
+                        <div class="security-metric"><span>Rotations en retard</span><strong id="security-overdue">0</strong><small>Échéances renseignées</small></div>
+                        <div class="security-metric"><span>Domaines différents</span><strong id="security-domains">0</strong><small>Inventaire calculé en mémoire</small></div>
+                    </div>
+                    <div class="security-two-cols">
+                        <div class="security-panel"><div class="security-panel-heading"><div><small>PRIORITÉS</small><h2>Vérifications recommandées</h2></div><span class="security-tag coral">À examiner</span></div><div id="security-audit-list" class="security-lines"></div></div>
+                        <div class="security-panel"><div class="security-panel-heading"><div><small>RENOUVELLEMENT</small><h2>Prochaines actions</h2></div><span class="security-tag mint">Planning</span></div><div id="security-rotation-list" class="security-lines"></div></div>
+                        <div class="security-panel"><div class="security-panel-heading"><div><small>VISIBILITÉ</small><h2>Inventaire des domaines</h2></div><span class="security-tag">En local</span></div><div id="security-domain-list" class="security-lines"></div></div>
+                        <div class="security-panel"><div class="security-panel-heading"><div><small>PASSATION</small><h2>Revue d'un collaborateur</h2></div><span class="security-tag">À vérifier</span></div><label class="security-select-label">Responsable<select id="security-owner"><option value="">Tous les responsables</option></select></label><div id="security-review-list" class="security-lines"></div><p class="help-text">La revue ne révoque aucun accès sur les sites externes.</p></div>
+                    </div>
+                    <div class="security-panel templates-panel"><div class="security-panel-heading"><div><small>CRÉATION ASSISTÉE</small><h2>Modèles de fiche</h2></div></div><p class="muted">Prépare les champs adaptés à un accès professionnel. Les identifiants restent à saisir et à enregistrer dans le coffre chiffré.</p><div class="security-templates"><button type="button" data-preset="administration">Administration</button><button type="button" data-preset="banque">Banque / Finance</button><button type="button" data-preset="client">Portail client</button><button type="button" data-preset="hebergement">Hébergement / IT</button></div></div>
+                </section>
+                <section id="view-generator" data-panel="generator" hidden>
+                    <div class="view-heading"><div><div class="bread">Outils / Générateur</div><h1>Générateur de mots de passe</h1><p class="muted">Créez des secrets aléatoires dans votre navigateur.</p></div></div>
+                    <div class="tool-card"><div class="generated-result"><input id="generator-result" type="text" readonly aria-label="Mot de passe généré"><button id="regen-btn" class="btn outline" type="button">↻ Regénérer</button><button id="copy-generated" class="btn primary" type="button">Copier</button></div><div class="section-tabs"><button id="gen-password-mode" class="selected" type="button">Mot de passe</button><button id="gen-phrase-mode" type="button">Phrase secrète</button></div><div class="generator-settings"><label>Longueur <strong id="gen-length-label">24</strong><input id="gen-length" type="range" min="8" max="64" value="24"></label><label class="switch-row"><input id="gen-upper" type="checkbox" checked> Majuscules (A-Z)</label><label class="switch-row"><input id="gen-lower" type="checkbox" checked> Minuscules (a-z)</label><label class="switch-row"><input id="gen-digits" type="checkbox" checked> Chiffres (0-9)</label><label class="switch-row"><input id="gen-symbols" type="checkbox" checked> Symboles (!@#...)</label></div><p class="help-text">Génération cryptographique avec <code>crypto.getRandomValues()</code>. Rien n'est envoyé au serveur.</p></div>
+                </section>
+                <section id="view-transfer" data-panel="transfer" hidden>
+                    <div class="view-heading"><div><div class="bread">Outils / Importer et exporter</div><h1>Importer / Exporter</h1><p class="muted">Sauvegardez ou restaurez les éléments chiffrés de ce coffre.</p></div></div>
+                    <div class="two-cards"><div class="tool-card"><div class="tool-icon">⇩</div><h2>Exporter mon coffre</h2><p>Téléchargez une archive JSON chiffrée. Le fichier ne contient pas vos mots de passe en clair.</p><button type="button" class="btn primary" id="export-vault">Exporter JSON chiffré</button></div><div class="tool-card"><div class="tool-icon">⇧</div><h2>Importer une sauvegarde</h2><p>Importez une sauvegarde créée depuis ce même coffre et cette même phrase secrète. Les éléments importés seront ajoutés.</p><label class="import-file">Choisir un fichier JSON<input type="file" accept=".json,application/json" id="import-file" hidden></label><button type="button" class="btn outline" id="import-vault">Importer les éléments</button></div></div>
+                </section>
+                {% if is_granted('ROLE_ADMIN') %}
+                <section id="view-admin" data-panel="admin" hidden>
+                    <div class="view-heading"><div><div class="bread">Datensis Stock / Accès réservé</div><h1>Administration</h1><p class="muted">Invitations individuelles et dépôts chiffrés, réservés aux administrateurs.</p></div></div>
+                    <div id="admin-auth-box" class="tool-card settings-card">
+                        <h2>Confirmer votre accès administrateur</h2>
+                        <p>Un mot de passe administrateur distinct est requis. L'autorisation expire après 10 minutes.</p>
+                        <form id="admin-auth-form" class="form-stack"><label>Mot de passe administrateur<input type="password" id="admin-password" autocomplete="off" required minlength="20"></label><button class="btn primary" type="submit">Accéder à l'administration</button></form>
+                    </div>
+                    <div id="admin-panel" hidden>
+                        <div class="tool-card settings-card">
+                            <div class="ds-admin-head"><h2>Inviter une personne à déposer ses identifiants</h2><button id="admin-lock" class="btn outline" type="button">Fermer l'accès admin</button></div>
+                            <p class="muted">Un lien nominatif, un code envoyé à l'adresse du destinataire et un dépôt unique. L'invité choisit des sous-dossiers dans l'entreprise autorisée.</p>
+                            <form id="admin-invite-form" class="form-stack">
+                                <label>Adresse e-mail du destinataire<input id="admin-invite-email" type="email" required autocomplete="off" maxlength="180" placeholder="contact@entreprise.fr"></label>
+                                <label>Entreprise / société / cabinet<select id="admin-invite-folder" required><option value="">Choisir une entreprise existante</option></select></label>
+                                <label>Durée du lien<select id="admin-invite-expiry"><option value="24">24 heures</option><option value="72">3 jours</option><option value="168">7 jours</option></select></label>
+                                <button class="btn primary" type="submit">Créer un lien individuel chiffré</button>
+                            </form>
+                            <div id="admin-invite-result" hidden><label>Copier le lien (affiché une seule fois)<input id="admin-invite-url" readonly></label><button class="btn outline" id="admin-copy-url" type="button">Copier le lien</button></div>
+                        </div>
+                        <div class="tool-card settings-card"><h2>Invitations et dépôts reçus</h2><div id="admin-invite-list" class="ds-invite-list"></div></div>
+                    </div>
+                </section>
+                {% endif %}
+                <section id="view-settings" data-panel="settings" hidden>
+                    <div class="view-heading"><div><div class="bread">Préférences</div><h1>Paramètres</h1><p class="muted">Gestion du compte et sécurité du coffre.</p></div></div>
+                    <div class="tool-card settings-card"><h2>Votre compte</h2><p><strong>Adresse :</strong> {{ app.user.userIdentifier }}</p><p><strong>Protection :</strong> chiffrement AES-256-GCM, dérivation Argon2id.</p><p><strong>Verrouillage :</strong> fermeture de l’onglet, sortie de la page ou verrouillage manuel. Le délai d’inactivité est désactivé par défaut (« Jamais »). Les rubriques internes ne verrouillent pas le coffre.</p><label for="pref-lock-minutes">Délai d’inactivité<select id="pref-lock-minutes"><option value="1">1 minute</option><option value="3">3 minutes</option><option value="5">5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option><option value="0" selected>Jamais (par défaut)</option></select></label><p class="muted">« Jamais » désactive uniquement le verrouillage pour inactivité. Le coffre reste verrouillé lorsque vous quittez l’onglet, fermez la page ou cliquez sur Verrouiller. Ce réglage est moins sûr sur un ordinateur partagé.</p><p><strong>Raccourcis :</strong> <kbd>/</kbd> rechercher · <kbd>N</kbd> nouvelle fiche · <kbd>Alt+1</kbd> mon coffre · <kbd>Échap</kbd> fermer.</p><button id="settings-lock" class="btn outline" type="button">Verrouiller maintenant</button><p class="muted">Barre d’outils : installez l’extension Chrome / Edge depuis le dossier <code>chrome-extension</code> pour ouvrir le générateur et les accès rapides sous l’icône du navigateur.</p></div>
+                    <div class="tool-card settings-card"><h2>Double authentification</h2>
+                        {% if vault_2fa_enabled %}
+                            <p>Vérification par e-mail via Brevo activée : un code à 6 chiffres est demandé à la connexion.</p>
+                            <p id="twofa-status">Activée · Code par e-mail</p>
+                        {% else %}
+                            <p>La double authentification par e-mail est temporairement désactivée pour cette installation.</p>
+                            <p id="twofa-status">Désactivée · Activation ultérieure dans config/services.yaml</p>
+                            <p class="muted">Le coffre reste protégé par le mot de passe principal et son chiffrement dans le navigateur.</p>
+                        {% endif %}
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+<dialog class="editor-dialog ds-folder-dialog" id="folder-dialog" aria-labelledby="folder-dialog-title">
+    <form id="folder-form" method="dialog">
+        <div class="dialog-top"><h2 id="folder-dialog-title">Créer un dossier</h2><button type="button" id="folder-close" class="dialog-close" aria-label="Fermer">✕</button></div>
+        <div class="dialog-fields">
+            <p class="muted">Un dossier racine porte le nom d’une entreprise, société ou cabinet. Vous pouvez créer des sous-dossiers à l’intérieur.</p>
+            <label>Dossier parent<select id="folder-parent"><option value="">Nouvelle entreprise / société / cabinet</option></select></label>
+            <label>Nom du dossier<input id="folder-name" required maxlength="80" autocomplete="off" placeholder="Ex. : Cabinet Dupont ou Comptabilité"></label>
+        </div>
+        <div class="dialog-bottom"><button class="btn outline" id="folder-cancel" type="button">Annuler</button><button class="btn primary" type="submit">Créer le dossier</button></div>
+    </form>
+</dialog>
+<dialog class="editor-dialog" id="item-dialog" aria-labelledby="dialog-title">
+    <form id="item-form" method="dialog" novalidate><div class="dialog-top"><div><small>ÉLÉMENT DU COFFRE</small><h2 id="dialog-title">Nouvel élément</h2></div><button type="button" id="close-dialog" class="dialog-close" aria-label="Fermer">✕</button></div>
+        <div class="dialog-fields"><p id="item-form-error" class="ds-form-error" role="alert" hidden></p><label>Type<select id="item-type"><option value="login">Identifiant</option><option value="note">Note sécurisée</option><option value="card">Carte bancaire</option><option value="identity">Identité</option><option value="ssh">Clé SSH</option></select></label><label>Nom <em>*</em><input id="item-name" maxlength="200" required placeholder="Nom de l'élément" autocomplete="off"></label>
+            <div id="login-fields" class="form-group"><label>Nom d'utilisateur<input id="item-username" autocomplete="off"></label><label>Mot de passe<div class="field-buttons"><input type="password" id="item-password" autocomplete="new-password"><button type="button" id="toggle-password">Voir</button><button type="button" id="generate-password">Générer</button></div></label><label>Adresse du site<input id="item-url" type="url" placeholder="https://teams.microsoft.com/"></label><p class="help-text">L’extension reconnaît toutes les pages du site indiqué, quelle que soit l’adresse après le domaine.</p><details><summary>Autre adresse de connexion (facultatif)</summary><label>Sites de connexion associés, un par ligne<textarea id="item-loginUrls" rows="2" maxlength="3000" placeholder="https://login.microsoftonline.com/"></textarea></label><p class="help-text">Si le service redirige vers une autre adresse, ajoutez-la ici (ex. Microsoft Teams). Ne l’activez que pour des sites de confiance.</p></details></div>
+            <div id="card-fields" class="form-group" hidden><label>Nom du titulaire<input id="item-cardHolder" autocomplete="off"></label><label>Numéro de carte<input id="item-cardNumber" autocomplete="off"></label><div class="form-columns"><label>Expiration<input id="item-expiry" placeholder="MM/AA"></label><label>Code de sécurité<input id="item-cvv" type="password"></label></div></div>
+            <div id="identity-fields" class="form-group" hidden><div class="form-columns"><label>Prénom<input id="item-firstName"></label><label>Nom<input id="item-lastName"></label></div><label>Adresse<input id="item-address"></label><label>Téléphone<input id="item-phone"></label><label>E-mail<input id="item-email" type="email"></label></div>
+            <div id="ssh-fields" class="form-group" hidden><label>Clé publique<textarea id="item-publicKey" rows="3"></textarea></label><label>Clé privée<textarea id="item-privateKey" rows="5"></textarea></label></div>
+            <div class="ds-folder-selector"><label>Entreprise / dossier / sous-dossier<select id="item-folder"><option value="">Sans dossier</option></select></label><button type="button" class="btn outline" id="item-new-folder">+ Créer un dossier</button></div>
+            <label>Notes<textarea id="item-notes" rows="3" maxlength="10000"></textarea></label><label class="checkline"><input id="item-favorite" type="checkbox"> Ajouter aux favoris</label>
+        </div><div class="dialog-bottom"><button class="btn danger" type="button" id="delete-item" hidden>Supprimer l’identifiant</button><span class="flex-fill"></span><button class="btn outline" id="cancel-dialog" type="button">Annuler</button><button class="btn primary" id="save-item" type="submit">Enregistrer</button></div></form>
+</dialog>
+<dialog class="editor-dialog" id="send-dialog" aria-labelledby="send-dialog-title">
+    <form id="send-form" method="dialog">
+        <div class="dialog-top">
+            <div><small>PARTAGE CHIFFRÉ</small><h2 id="send-dialog-title">Créer un Send</h2></div>
+            <button id="send-close" type="button" class="dialog-close" aria-label="Fermer">✕</button>
+        </div>
+        <div class="dialog-fields ds-send-fields">
+            <fieldset class="web-send-mode" aria-label="Que souhaitez-vous partager ?">
+                <legend>Que souhaitez-vous partager ?</legend>
+                <label class="ds-send-option" for="send-mode-login"><input type="radio" name="send-mode" id="send-mode-login" value="login" checked><span>Un mot de passe du coffre</span></label>
+                <label class="ds-send-option" for="send-mode-text"><input type="radio" name="send-mode" id="send-mode-text" value="text"><span>Un texte libre</span></label>
+                <label class="ds-send-option" for="send-mode-file"><input type="radio" name="send-mode" id="send-mode-file" value="file"><span>Un fichier</span></label>
+            </fieldset>
+            <div id="send-login-wrap" class="web-send-section">
+                <label for="send-entry">Identifiant à partager</label>
+                <select id="send-entry" required autocomplete="off"><option value="">Choisir un identifiant enregistré…</option></select>
+                <p id="send-entry-preview" class="web-send-preview" aria-live="polite">Choisissez une fiche. Le mot de passe reste masqué.</p>
+                <label for="send-login-note">Message au destinataire <span class="ds-optional">(facultatif)</span></label>
+                <textarea id="send-login-note" rows="2" maxlength="2000" placeholder="Voici l’accès demandé."></textarea>
+                <p class="help-text">Seuls le nom de la fiche, l’identifiant, le mot de passe choisi et votre message seront partagés. Aucune autre donnée de la fiche n’est envoyée.</p>
+            </div>
+            <div id="send-text-wrap" class="web-send-section" hidden>
+                <label for="send-text">Texte à partager</label>
+                <textarea id="send-text" rows="5" maxlength="20000" disabled placeholder="Écrivez votre texte confidentiel…"></textarea>
+            </div>
+            <div id="send-file-wrap" class="web-send-section" hidden>
+                <label for="send-file">Fichier à partager <span class="ds-optional">(2 Mo maximum)</span></label>
+                <input type="file" id="send-file" disabled>
+            </div>
+            <details id="send-options" class="web-send-options">
+                <summary>Options du lien (facultatif)</summary>
+                <div class="web-send-options-fields">
+                    <label for="send-name">Nom du partage</label>
+                    <input id="send-name" maxlength="160" autocomplete="off" placeholder="Généré automatiquement si vide">
+                    <div class="form-columns">
+                        <label for="send-expire">Expiration<select id="send-expire"><option value="1">1 heure</option><option value="24" selected>24 heures</option><option value="168">7 jours</option><option value="720">30 jours</option></select></label>
+                        <label for="send-max">Limite de lectures<input id="send-max" type="number" min="1" max="1000" placeholder="Sans limite"></label>
+                    </div>
+                    <label for="send-pass">Mot de passe de protection du lien <span class="ds-optional">(facultatif)</span></label>
+                    <input type="password" id="send-pass" minlength="8" maxlength="72" autocomplete="new-password" placeholder="8 caractères minimum">
+                    <p class="help-text">Ce mot de passe protège l’accès au lien Send. Il est différent du mot de passe du coffre partagé.</p>
+                    <label class="checkline" for="send-hidden"><input type="checkbox" id="send-hidden"> Masquer le texte libre jusqu’au clic du destinataire</label>
+                </div>
+            </details>
+            <p class="help-text ds-send-warning">Le lien contient la clé de déchiffrement. Toute personne possédant le lien complet peut lire le partage (sauf si vous ajoutez un mot de passe d’accès).</p>
+            <p id="send-form-error" class="ds-form-error" role="alert" hidden></p>
+            <div id="send-created" class="web-send-created" hidden aria-live="polite">
+                <strong>Votre lien sécurisé est prêt</strong>
+                <label for="send-result-link">Lien à partager
+                    <input type="text" id="send-result-link" readonly autocomplete="off" spellcheck="false">
+                </label>
+                <div class="web-send-result-actions">
+                    <button type="button" class="btn primary" id="send-copy">Copier le lien</button>
+                    <button type="button" class="btn outline" id="send-another">Créer un autre Send</button>
+                </div>
+            </div>
+        </div>
+        <div class="dialog-bottom">
+            <button id="send-cancel" type="button" class="btn outline">Fermer</button>
+            <span class="flex-fill"></span>
+            <button id="send-submit" type="submit" class="btn primary">Créer le lien sécurisé</button>
+        </div>
+    </form>
+</dialog>
+{% endblock %}
+{% block scripts %}<script src="{{ asset('assets/hash-wasm-argon2id-4.12.0.min.js') }}?v=4.12.0"></script><script defer src="{{ asset('assets/account-sharing.js') }}?v=20261030-share-auto2"></script><script defer src="{{ asset('assets/actions-tools.js') }}"></script><script defer src="{{ asset('assets/vault-session-guard.js') }}"></script><script defer src="{{ asset('assets/vault.js') }}?v=20261103-argon2id2"></script><script defer src="{{ asset('assets/recipient-search.js') }}?v=20261030-share-auto2"></script>{% endblock %}

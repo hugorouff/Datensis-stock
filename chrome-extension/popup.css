@@ -1,0 +1,69 @@
+:root{color-scheme:light;--petrol:#00778B;--petrol-dark:#005c6a;--coral:#E96148;--sage:#82C4A8;--text:#163e44;--muted:#607e80;--border:#d5e8e1;--surface:#f3faf6}
+*{box-sizing:border-box}
+html,body{width:100%;min-width:320px;min-height:100%;max-height:none;margin:0;overflow-y:auto}
+body{background:#fff;color:var(--text);font:13px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+.masthead{display:flex;gap:11px;align-items:center;background:linear-gradient(120deg,#005e6e,#00778B);color:white;padding:14px 17px;position:sticky;top:0;z-index:3}
+.brand-mark{width:39px;height:39px;background:var(--coral);border-radius:12px;display:grid;place-items:center;font-size:21px}.brand-copy{flex:1}.brand-copy strong{font-size:17px;display:block}.brand-copy small{color:#d8f5eb;display:block}
+main{padding:14px 17px 18px}.icon-btn{background:#ffffff22;color:white;border:1px solid #ffffff44;border-radius:9px;padding:6px 10px;font-size:17px}
+[hidden]{display:none!important}.intro{display:grid;gap:6px;margin:10px 0 15px}.intro strong{font-size:19px}.intro span,.muted,.tiny,.hint{color:var(--muted)}
+label{font-weight:700;font-size:12px;display:block;margin:11px 0 6px}input:not([type=checkbox]):not([type=range]),select,textarea{display:block;width:100%;border:1px solid #cbded9;border-radius:9px;background:white;color:var(--text);padding:10px 11px;font:inherit;min-width:0}textarea{resize:vertical}input:focus,select:focus,textarea:focus{outline:2px solid #82c4a8;outline-offset:1px}
+button{cursor:pointer;font:inherit}button:disabled{opacity:.55;cursor:default}.block{width:100%;margin-top:13px}.primary{border:0;border-radius:9px;padding:11px 12px;background:var(--petrol);color:white;font-weight:800}.primary:hover{background:var(--petrol-dark)}
+.outline{border:1px solid #bcd8d0;border-radius:8px;background:white;color:var(--petrol-dark);padding:9px 10px;font-weight:700}.slim{white-space:nowrap;font-size:11px}.danger-outline{color:#bf4633;border:1px solid #f1bdb3;padding:9px 10px;border-radius:8px;background:white;font-weight:700}
+.link-button{border:0;background:none;color:var(--petrol-dark);font-weight:700;padding:9px 0;text-align:left}
+.hint{font-size:11px;line-height:1.5;margin:12px 0}.message{font-size:12px;color:var(--petrol);min-height:18px;margin:8px 0 0;overflow-wrap:anywhere}.message.error{color:#bd442f}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:#e4f3ec;padding:4px;border-radius:10px;margin-bottom:13px}.tabs button{border:0;border-radius:8px;background:transparent;color:#447575;font-size:12px;font-weight:700;padding:9px 4px}.tabs button.active{background:white;color:#005e6e;box-shadow:0 1px 5px #073a3221}
+.search-row,.filter-row,.form-inline,.length-row{display:flex;align-items:center;gap:7px}.search-row input,.filter-row select,.form-inline input{flex:1}.filter-row{margin-top:7px}.small-primary{background:var(--petrol);border:0;border-radius:8px;padding:7px 12px;color:white;font-weight:800;font-size:19px}.tiny{font-size:11px;margin:10px 0 6px}.item-list{display:grid;gap:7px}.entry{display:flex;width:100%;text-align:left;align-items:center;gap:10px;padding:11px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--text)}.entry:hover{border-color:var(--sage);background:#f7fcf9}.entry-mark{width:35px;height:35px;background:#e7f5ee;display:grid;place-items:center;border-radius:9px;font-size:17px;color:var(--petrol)}.entry-copy{display:grid;gap:2px;min-width:0;flex:1}.entry-copy strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.entry-copy small{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.entry-chevron{color:#8aa8a1}.empty{padding:22px 11px;text-align:center;background:var(--surface);border-radius:10px;color:var(--muted)}
+h2{font-size:16px;margin:13px 0 8px}.detail-fields{display:grid;gap:8px;margin:13px 0}.field-card{background:var(--surface);padding:10px 11px;border:1px solid #deeee7;border-radius:9px}.field-card small{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}.field-card .value{word-break:break-word;white-space:pre-wrap}.secret-row{display:flex;align-items:center;gap:8px}.secret-row .value{flex:1;font-family:Consolas,monospace}.field-actions{display:flex;gap:5px}.field-actions button{background:#fff;border:1px solid var(--border);color:var(--petrol-dark);border-radius:7px;padding:6px 9px}.detail-actions{display:flex;gap:7px;flex-wrap:wrap;margin:15px 0}.checkline{display:flex;align-items:center;gap:7px}.checkline input{accent-color:var(--petrol)}.length-row{margin:18px 0}.length-row label{margin:0}.length-row input{flex:1;accent-color:var(--petrol)}fieldset{border:1px solid var(--border);border-radius:9px;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:11px}fieldset legend{font-weight:800;font-size:12px}fieldset label{font-size:12px;margin:0;font-weight:400}fieldset input{accent-color:var(--petrol)}
+
+.section-heading{display:flex;align-items:center;justify-content:space-between}.section-heading h2{margin:8px 0}.send-row{border:1px solid var(--border);border-radius:9px;padding:11px;display:grid;gap:7px}.send-title{display:flex;justify-content:space-between;gap:8px}.send-title strong{overflow:hidden;text-overflow:ellipsis}.send-row small{color:var(--muted)}.send-actions{display:flex;gap:6px;flex-wrap:wrap}.send-actions button{padding:6px 8px;font-size:11px}.section-heading .small-primary{font-size:18px;padding:4px 10px}
+
+/* Ajustement a la largeur variable du panneau lateral natif. */
+html,body{width:100%;min-width:0;}
+@media(max-width:355px){main{padding:12px}.tabs{gap:2px}.tabs button{font-size:11px;padding:9px 2px}.search-row{gap:4px}.filter-row{gap:4px}.form-inline{flex-wrap:wrap}}
+
+/* Send rapide : formulaire direct, options secondaires repliables, lien disponible après création. */
+.send-options{border:1px solid var(--border);background:var(--surface);border-radius:10px;margin-top:11px;padding:10px 12px}
+.send-options summary{cursor:pointer;color:var(--petrol-dark);font-weight:750;list-style:revert}
+.send-options[open]{padding-bottom:14px}
+.send-options label:first-of-type{margin-top:13px}
+.send-success{margin:16px 0;padding:13px;border:1px solid #a7daca;border-radius:11px;background:#f0faf6;overflow-wrap:anywhere}
+.send-success h3{font-size:15px;margin:0 0 5px}
+.send-success label{margin-top:8px}
+.send-success input{font-family:Consolas,monospace;font-size:11px}
+.send-result-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.send-result-actions button{flex:1;min-width:120px}
+.send-history{border-top:1px solid var(--border);margin-top:20px;padding-top:13px}
+
+/* Choix explicite du mot de passe du coffre pour Send. */
+.send-mode{grid-template-columns:1fr;margin:10px 0 12px;padding:12px}
+.send-mode legend{padding:0 4px}
+.send-mode label{display:flex;gap:8px;align-items:center;margin:0;font-weight:650}
+.send-mode input{flex:0 0 auto}
+.send-preview{padding:10px 11px;background:var(--surface);border:1px solid var(--border);border-radius:9px;font-size:12px;overflow-wrap:anywhere}
+
+/* Evite le debordement des boutons radio et du titre Send dans un panneau etroit. */
+#tab-send,#send-form,#send-form>*,.send-mode{min-width:0;max-width:100%;box-sizing:border-box}
+.send-mode{display:grid;grid-template-columns:minmax(0,1fr);width:100%;gap:9px;padding:12px;margin:12px 0;border:1px solid var(--border);border-radius:12px}
+.send-mode legend{max-width:100%;padding:0 5px;white-space:normal;overflow-wrap:anywhere;line-height:1.45}
+.send-mode label{min-width:0;width:100%;display:flex;align-items:center;gap:9px;margin:0;padding:9px;border:1px solid transparent;border-radius:9px;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere;font-weight:600;line-height:1.35}
+.send-mode label:has(input:checked){background:#e4f5ec;border-color:#a8d9c5;color:#075e64}
+.send-mode label input[type=radio]{width:16px;min-width:16px;height:16px;margin:0;flex:0 0 auto}
+.send-mode~*{max-width:100%;min-width:0}
+@media(max-width:360px){.send-mode{padding:9px}.send-mode label{padding:8px 6px}}
+
+.ds-folder-inline{display:grid;gap:8px;padding:12px;border:1px solid #82C4A8;border-radius:12px;background:#f2faf6;margin:8px 0;}
+.ds-folder-inline[hidden]{display:none!important;}
+#entry-folder{max-width:100%;}
+/* Proposition rapide pour le site ouvert. */
+.site-suggestions{margin:10px 0;padding:11px 12px;border:1px solid #a9d5c8;border-radius:10px;background:#f1faf6;overflow-wrap:anywhere}
+.site-suggestions strong{font-size:12px;color:#07596a}.site-suggestions .hint{margin:5px 0}
+.entry-with-action{display:flex;align-items:stretch;gap:6px;min-width:0}
+.entry-with-action>.entry{flex:1;min-width:0}.entry-with-action>.outline{align-self:center;padding:9px 10px}
+
+/* Reglage explicite de la sauvegarde native dans Edge. */
+.browser-password-setting{border:1px solid var(--border);border-radius:12px;background:#f4faf7;padding:12px;margin:15px 0}
+.browser-password-setting strong{display:block;font-size:13px;color:var(--petrol-dark)}
+.browser-password-setting .hint{margin:6px 0 8px}
+
+.advanced-server-setting{margin:16px 0;padding:10px 12px;border:1px solid var(--border);border-radius:10px}
+.advanced-server-setting summary{cursor:pointer;font-weight:700;color:var(--petrol-dark)}

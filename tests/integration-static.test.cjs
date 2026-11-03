@@ -1,0 +1,15 @@
+'use strict';
+const assert=require('node:assert/strict');const fs=require('node:fs');
+const read=n=>fs.readFileSync(n,'utf8');
+const template=read('templates/vault/index.html.twig');
+const js=read('public/assets/vault.js'),login=read('public/assets/login-unified.js'),controller=read('src/Controller/VaultController.php');
+const ids=new Set([...template.matchAll(/\bid="([\w-]+)"/g)].map(x=>x[1]));
+for(const [,id] of js.matchAll(/\$\('([\w-]+)'\)/g))assert.ok(ids.has(id),'Missing HTML id: '+id);
+for(const x of ['actions-total','actions-pending','actions-late','actions-clients','actions-queue','actions-tags','actions-activity','pref-lock-minutes','item-url','item-username','item-password'])assert.ok(ids.has(x),x);
+assert.ok(controller.includes("#[Route('/actions'"));
+assert.ok(template.includes('assets/actions-tools.js'));assert.ok(template.includes('assets/vault-session-guard.js'));assert.ok(login.includes('actions-tools.js'));assert.ok(login.includes('vault-session-guard.js'));
+assert.ok(login.indexOf("loadScript('/assets/actions-tools.js?v=") < login.indexOf("loadScript('/assets/vault-session-guard.js?v=") && login.indexOf("loadScript('/assets/vault-session-guard.js?v=") < login.indexOf("loadScript('/assets/vault.js?v="));
+const manifest=JSON.parse(read('chrome-extension/manifest.json'));assert.equal(manifest.action.default_popup,undefined);assert.equal(manifest.background.service_worker,'service-worker.js');assert.ok(read('chrome-extension/service-worker.js').includes('chrome.sidePanel.setPanelBehavior'));assert.equal(manifest.side_panel.default_path,'popup.html');assert.ok(manifest.permissions.includes('sidePanel')); 
+assert.ok(manifest.permissions.includes('storage'));assert.ok(manifest.permissions.includes('activeTab'));assert.ok(manifest.host_permissions.includes('https://*/*'));
+assert.ok(read('chrome-extension/popup.js').includes("fetchApi('/session'"));assert.ok(read('chrome-extension/popup.js').includes("showItem(item.id)"));
+console.log('OK: routes, templates, assets, login sequence, persistent browser side panel, UI targets');

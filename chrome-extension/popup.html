@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Datensis Stock — Mini-coffre</title><link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="brand-mark" aria-hidden="true">◆</div>
+  <div class="brand-copy"><strong>Datensis Stock</strong><small id="connection-label">Coffre verrouillé</small></div>
+  <button id="lock" class="icon-btn" type="button" title="Verrouiller et déconnecter" hidden>⏻</button>
+</header>
+<main>
+  <section id="login-screen" aria-label="Connexion au coffre">
+    <div class="intro"><strong>Votre coffre, dans le panneau d’outils.</strong><span>Connectez-vous pour retrouver vos identifiants sans quitter l'onglet.</span></div>
+    <form id="login-form" autocomplete="off">
+      <label for="login-email">Adresse e-mail</label>
+      <input id="login-email" type="email" autocomplete="off" maxlength="180" required placeholder="vous@entreprise.fr">
+      <label for="login-password">Mot de passe principal</label>
+      <input id="login-password" type="password" autocomplete="off" required placeholder="Mot de passe du coffre">
+      <button id="login-submit" class="primary block" type="submit">Se connecter et déverrouiller</button>
+    </form>
+    <p class="hint">La clé de chiffrement reste uniquement en mémoire. Le panneau se verrouille à sa fermeture. Le verrouillage après inactivité est désactivé par défaut (« Jamais »). La 2FA reste désactivée dans la version de développement.</p>
+  </section>
+
+  <div id="unlocked-screen" hidden>
+    <nav class="tabs" aria-label="Sections">
+      <button class="active" type="button" data-tab="vault" aria-selected="true">Coffre</button>
+      <button type="button" data-tab="send" aria-selected="false">Send</button>
+      <button type="button" data-tab="generator" aria-selected="false">Générateur</button>
+      <button type="button" data-tab="settings" aria-selected="false">Réglages</button>
+    </nav>
+    <section id="tab-vault" class="panel">
+      <div id="list-area">
+        <div class="search-row"><input id="search" type="search" placeholder="Rechercher un identifiant..." autocomplete="off" aria-label="Rechercher"><button id="add" class="small-primary" type="button" title="Nouvel élément">＋</button></div>
+        <div class="filter-row"><select id="filter" aria-label="Filtrer les éléments"><option value="all">Tous les éléments</option><option value="login">Identifiants</option><option value="note">Notes</option><option value="card">Cartes</option><option value="identity">Identités</option><option value="ssh">Clés SSH</option><option value="favorite">Favoris</option><option value="trash">Corbeille</option></select><button id="matched" class="outline slim" type="button" title="Identifiants liés au site ouvert">Site actif</button></div>
+        <div id="site-suggestions" class="site-suggestions" hidden><strong id="site-suggestions-title">Identifiants de ce site — remplissage automatique actif si un seul compte correspond</strong><p id="site-suggestions-status" class="hint"></p><button id="site-permission" type="button" class="outline slim" hidden>Autoriser ce site pour le remplissage automatique</button></div>
+        <p id="list-count" class="tiny"></p>
+        <div id="item-list" class="item-list" aria-live="polite"></div>
+      </div>
+      <section id="detail-area" hidden aria-label="Détail de l'élément">
+        <button id="detail-back" class="link-button" type="button">← Retour au coffre</button>
+        <h2 id="detail-name"></h2><p id="detail-type" class="muted"></p>
+        <div id="detail-fields" class="detail-fields"></div>
+        <div class="detail-actions"><button id="fill-site" type="button" class="primary" hidden>Remplir sur ce site</button><button id="edit" type="button" class="outline">Modifier</button><button id="share-entry" type="button" class="primary">Partager avec Send</button><button id="favorite" type="button" class="outline">Favori ☆</button><button id="trash" type="button" class="danger-outline">Corbeille</button></div>
+      </section>
+      <section id="editor-area" hidden aria-label="Édition de l'élément">
+        <button id="editor-back" class="link-button" type="button">← Annuler</button>
+        <h2 id="editor-title">Nouvel élément</h2>
+        <form id="editor-form">
+          <label for="entry-type">Type</label><select id="entry-type"><option value="login">Identifiant</option><option value="note">Note sécurisée</option><option value="card">Carte bancaire</option><option value="identity">Identité</option><option value="ssh">Clé SSH</option></select>
+          <label for="entry-name">Nom de la fiche *</label><input id="entry-name" required maxlength="200" autocomplete="off">
+          <div data-fields="login">
+            <label for="entry-username">Identifiant</label><input id="entry-username" autocomplete="off">
+            <label for="entry-password">Mot de passe</label><div class="form-inline"><input id="entry-password" type="password" autocomplete="new-password"><button id="entry-reveal" class="outline" type="button">Voir</button><button id="entry-generate" class="outline" type="button" title="Générer">↻</button></div>
+            <label for="entry-url">Adresse du site</label><input id="entry-url" type="url" autocomplete="url" placeholder="https://teams.microsoft.com/"><p class="hint">Les identifiants sont proposés sur toutes les pages du site affiché dans la barre d’adresse.</p>
+            <details class="site-advanced"><summary>Autre adresse de connexion (facultatif)</summary><label for="entry-loginUrls">Sites de connexion associés (un par ligne)</label><textarea id="entry-loginUrls" rows="2" maxlength="3000" placeholder="https://login.microsoftonline.com/"></textarea><p class="hint">Utile quand le site vous redirige vers un domaine de connexion distinct, par exemple Microsoft Teams. Chaque adresse doit être ajoutée volontairement.</p></details>
+          </div>
+          <div data-fields="note" hidden><label for="entry-notes">Contenu de la note sécurisée</label><textarea id="entry-notes" rows="6" maxlength="10000" placeholder="Votre note confidentielle..."></textarea></div>
+          <div data-fields="card" hidden><label for="entry-cardHolder">Titulaire</label><input id="entry-cardHolder"><label for="entry-cardNumber">Numéro</label><input id="entry-cardNumber"><label for="entry-expiry">Expiration</label><input id="entry-expiry" placeholder="MM/AA"><label for="entry-cvv">Code de sécurité</label><input id="entry-cvv" type="password"></div>
+          <div data-fields="identity" hidden><label for="entry-firstName">Prénom</label><input id="entry-firstName"><label for="entry-lastName">Nom</label><input id="entry-lastName"><label for="entry-email">E-mail</label><input id="entry-email" type="email"><label for="entry-phone">Téléphone</label><input id="entry-phone"><label for="entry-address">Adresse</label><textarea id="entry-address" rows="2"></textarea></div>
+          <div data-fields="ssh" hidden><label for="entry-publicKey">Clé publique</label><textarea id="entry-publicKey" rows="2"></textarea><label for="entry-privateKey">Clé privée</label><textarea id="entry-privateKey" rows="3"></textarea></div>
+          <label for="entry-folder">Entreprise / dossier / sous-dossier</label>
+          <select id="entry-folder"><option value="">Sans dossier</option></select>
+          <button type="button" id="entry-folder-new" class="outline">+ Créer un dossier</button>
+          <div id="entry-folder-create" hidden class="ds-folder-inline">
+            <label for="entry-folder-parent">Dossier parent</label><select id="entry-folder-parent"><option value="">Nouvelle entreprise / société / cabinet</option></select>
+            <label for="entry-folder-name">Nom</label><input id="entry-folder-name" maxlength="80" autocomplete="off" placeholder="Nom de la société ou du sous-dossier">
+            <button id="entry-folder-confirm" class="primary" type="button">Créer</button>
+          </div>
+          <label class="checkline"><input id="entry-favorite" type="checkbox"> Ajouter aux favoris</label>
+          <button id="entry-save" type="submit" class="primary block">Enregistrer dans mon coffre</button>
+        </form>
+      </section>
+    </section>
+    <section id="tab-send" class="panel" hidden>
+      <h2>Créer un Send sécurisé</h2>
+      <p class="hint">Choisissez un identifiant de votre coffre ou écrivez un message. Le contenu est chiffré dans votre navigateur avant le partage.</p>
+      <form id="send-form">
+        <fieldset class="send-mode" aria-label="Contenu à partager">
+          <legend>Que voulez-vous partager ?</legend>
+          <label><input id="send-mode-login" type="radio" name="send-mode" value="login" checked> Un mot de passe du coffre</label>
+          <label><input id="send-mode-text" type="radio" name="send-mode" value="text"> Un texte libre</label>
+        </fieldset>
+        <div id="send-login-area">
+          <label for="send-entry">Quel mot de passe voulez-vous partager ? *</label>
+          <select id="send-entry" required autocomplete="off">
+            <option value="">Choisir un identifiant enregistré…</option>
+          </select>
+          <p id="send-entry-preview" class="send-preview" aria-live="polite">Sélectionnez une fiche. Le mot de passe reste masqué dans le panneau.</p>
+          <label for="send-login-note">Message au destinataire (facultatif)</label>
+          <textarea id="send-login-note" rows="2" maxlength="2000" placeholder="Ex. : Voici l'accès demandé."></textarea>
+          <p class="hint">Seuls le nom de la fiche, l'identifiant, le mot de passe choisi et ce message seront partagés. Les autres données du coffre ne sont pas incluses.</p>
+        </div>
+        <div id="send-text-area" hidden>
+          <label for="send-text">Texte à partager *</label>
+          <textarea id="send-text" required disabled rows="5" maxlength="20000" placeholder="Saisissez le texte confidentiel à partager…"></textarea>
+        </div>
+        <details id="send-options" class="send-options">
+          <summary>Options du lien (facultatif)</summary>
+          <label for="send-name">Nom du partage</label>
+          <input id="send-name" maxlength="160" autocomplete="off" placeholder="Automatique si laissé vide">
+          <label for="send-expiry">Le lien expire après</label>
+          <select id="send-expiry"><option value="1">1 heure</option><option value="24" selected>24 heures</option><option value="168">7 jours</option><option value="720">30 jours</option></select>
+          <label for="send-max">Nombre maximal de lectures</label>
+          <input id="send-max" type="number" min="1" max="1000" placeholder="Sans limite">
+          <label for="send-password">Mot de passe pour ouvrir le lien (facultatif)</label>
+          <input id="send-password" type="password" minlength="8" maxlength="72" autocomplete="new-password" placeholder="Protection supplémentaire — 8 caractères minimum">
+          <p class="hint">Ce mot de passe protège l'ouverture du lien. Il est différent du mot de passe du coffre que vous partagez.</p>
+        </details>
+        <button id="send-create" class="primary block" type="submit">Créer le lien sécurisé</button>
+      </form>
+      <div id="send-created" class="send-success" hidden aria-label="Lien de partage créé">
+        <h3>Votre lien est prêt</h3>
+        <p class="hint">Le lien contient la clé de déchiffrement. Partagez-le seulement avec le destinataire prévu.</p>
+        <label for="send-result-link">Lien confidentiel</label>
+        <input id="send-result-link" type="text" readonly autocomplete="off" spellcheck="false">
+        <div class="send-result-actions">
+          <button id="send-copy" type="button" class="primary">Copier le lien</button>
+          <button id="send-new" type="button" class="outline">Créer un autre Send</button>
+        </div>
+      </div>
+      <div id="send-list-area" class="send-history">
+        <div class="section-heading"><h2>Mes partages</h2><button id="send-refresh" class="outline slim" type="button">Actualiser</button></div>
+        <div id="send-list" class="item-list"></div>
+      </div>
+    </section>
+    <section id="tab-generator" class="panel" hidden>
+      <h2>Générateur de mots de passe</h2>
+      <label for="generated">Mot de passe généré</label>
+      <div class="form-inline"><input id="generated" readonly spellcheck="false" autocomplete="off"><button id="copy-generated" class="outline" type="button">Copier</button></div>
+      <div class="length-row"><label for="length">Longueur</label><input id="length" type="range" min="12" max="64" value="24"><output id="length-output">24</output></div>
+      <fieldset><legend>Caractères</legend><label><input id="upper" type="checkbox" checked> Majuscules</label><label><input id="lower" type="checkbox" checked> Minuscules</label><label><input id="digits" type="checkbox" checked> Chiffres</label><label><input id="symbols" type="checkbox" checked> Symboles</label></fieldset>
+      <button id="generate" class="primary block" type="button">Générer un nouveau mot de passe</button>
+      <p class="hint">Génération locale avec le générateur cryptographique du navigateur.</p>
+    </section>
+    <section id="tab-settings" class="panel" hidden>
+      <h2>Paramètres</h2>
+      <p class="hint">Tant que ce panneau reste ouvert et déverrouillé, les identifiants correspondants sont remplis automatiquement sur les sites autorisés. Sa fermeture verrouille toujours le coffre. Vous pouvez également choisir un délai d’inactivité.</p>
+      <label for="idle-minutes">Verrouiller après une inactivité de</label>
+      <select id="idle-minutes"><option value="1">1 minute</option><option value="3">3 minutes</option><option value="5">5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option><option value="0" selected>Jamais (par défaut)</option></select>
+      <p id="idle-countdown" class="hint" role="status">Verrouillage automatique actif.</p>
+      <p class="hint">Le panneau doit rester ouvert pour autoriser le remplissage automatique. Seules les interactions dans ce panneau comptent comme activité. « Jamais » désactive seulement l’inactivité : fermeture et verrouillage manuel restent actifs, et les requêtes au serveur expirent normalement. Aucun secret n’est enregistré.</p>
+      <div class="browser-password-setting">
+        <strong>Gestionnaire de mots de passe d’Edge</strong>
+        <p class="hint">Désactiver les propositions de sauvegarde du navigateur pour utiliser Datensis Stock à la place. Ce réglage concerne tout Edge et nécessite votre accord.</p>
+        <p id="browser-save-status" class="hint" role="status">Vérification du réglage…</p>
+        <button id="disable-browser-save" type="button" class="outline block">Désactiver la sauvegarde dans Edge</button>
+      </div>
+      <details class="advanced-server-setting">
+        <summary>Connexion au serveur (avancé)</summary>
+        <p class="hint">Option réservée au changement d’environnement de Datensis Stock. Inutile pour votre installation habituelle.</p>
+        <label for="advanced-server">Adresse de Datensis Stock</label>
+        <input id="advanced-server" type="url" autocomplete="off" placeholder="http://127.0.0.1:8001">
+        <button id="save-advanced-server" type="button" class="outline block">Enregistrer le serveur</button>
+      </details>
+      <button id="settings-lock" class="outline block" type="button">Verrouiller maintenant</button>
+      <button id="open-website" class="link-button" type="button">Ouvrir le site complet (facultatif)</button>
+    </section>
+  </div>
+
+  <p id="message" role="status" aria-live="polite" class="message"></p>
+</main>
+<script src="hash-wasm-argon2id-4.12.0.min.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

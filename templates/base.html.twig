@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#00778B">
+    <title>{% block title %}Mon coffre{% endblock %} · Datensis Stock</title>
+    <link rel="stylesheet" href="{{ asset('assets/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/modern.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/datensis-identity.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/datensis-palette.css') }}?v=20261029-1">
+    <link rel="stylesheet" href="{{ asset('assets/datensis-brand-layout.css') }}?v=20261029-brand2">
+    {% block head %}{% endblock %}
+    <link rel="stylesheet" href="{{ asset('assets/datensis-share.css') }}?v=20261029-recipient-autocomplete">
+    <link rel="stylesheet" href="{{ asset('assets/datensis-vault-forms.css') }}?v=20261030-send-edit2">
+    <link rel="stylesheet" href="{{ asset('assets/datensis-vault-responsive.css') }}?v=20261030-autofill-responsive4">
+</head>
+<body>
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash flash-{{ type }}" role="status">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+    {% block body %}{% endblock %}
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,53 @@
+/* Datensis Stock — formulaires de coffre / Send lisibles (v2) */
+#send-dialog.editor-dialog {width:min(96vw,740px);max-width:740px;max-height:min(91vh,900px);overflow:hidden;padding:0;border-radius:18px;}
+#send-dialog form {display:flex;flex-direction:column;max-height:min(91vh,900px);min-height:0;}
+#send-dialog .dialog-top {flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:19px 25px;}
+#send-dialog .dialog-top h2 {margin:4px 0 0;font-size:22px;line-height:1.25;}
+#send-dialog .dialog-top small {font-size:10px;letter-spacing:.11em;}
+#send-dialog .dialog-close {flex:0 0 auto;min-width:34px;min-height:34px;}
+#send-dialog .ds-send-fields {display:grid;align-content:start;gap:20px;overflow:auto;min-height:0;padding:24px 26px;}
+#send-dialog .web-send-mode {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;min-width:0;border:0;margin:0;padding:0;}
+#send-dialog .web-send-mode legend {display:block;float:none;width:100%;margin:0 0 12px;padding:0;font-size:13px;font-weight:750;line-height:1.4;}
+#send-dialog .web-send-mode .ds-send-option {display:flex;align-items:center;justify-content:flex-start;gap:10px;min-height:63px;min-width:0;padding:12px;background:var(--ds-panel,#fff);border:1px solid var(--ds-line,#c9ded9);border-radius:11px;font-size:12px;font-weight:650;line-height:1.4;cursor:pointer;white-space:normal;overflow-wrap:anywhere;}
+#send-dialog .ds-send-option input {display:block;position:static;flex:0 0 17px;width:17px;height:17px;margin:0;accent-color:#00778b;}
+#send-dialog .ds-send-option span {display:block;min-width:0;}
+#send-dialog .web-send-section {display:grid;gap:10px;min-width:0;}
+#send-dialog .web-send-section>label,#send-dialog .web-send-options-fields>label:not(.checkline) {display:block;margin:0;font-size:12px;font-weight:750;line-height:1.5;}
+#send-dialog .web-send-section>select,#send-dialog .web-send-section>textarea,#send-dialog .web-send-section>input,#send-dialog .web-send-options-fields>input {display:block;width:100%;min-width:0;max-width:100%;padding:11px 12px;border:1px solid var(--ds-line,#c9ded9);border-radius:9px;background:var(--ds-panel,#fff);color:var(--ds-ink,#173c3d);box-sizing:border-box;}
+#send-dialog .web-send-section>select:focus,#send-dialog .web-send-section>textarea:focus,#send-dialog .web-send-options-fields input:focus {outline:2px solid #82c4a8;outline-offset:1px;}
+#send-dialog .web-send-preview {margin:0;line-height:1.6;padding:12px 14px;}
+#send-dialog .ds-optional {font-weight:500;color:var(--ds-muted,#658078);}
+#send-dialog .help-text {font-size:11px;line-height:1.65;margin:0;}
+#send-dialog .web-send-options {margin:0;padding:15px;border:1px solid var(--ds-line,#c9ded9);border-radius:11px;}
+#send-dialog .web-send-options summary {display:list-item;margin:0;font-size:13px;cursor:pointer;}
+#send-dialog .web-send-options-fields {display:grid;gap:13px;margin:0;padding-top:18px;}
+#send-dialog .web-send-options-fields .form-columns {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+#send-dialog .web-send-options-fields .form-columns label {display:flex;flex-direction:column;gap:7px;min-width:0;font-size:12px;font-weight:700;}
+#send-dialog .web-send-options-fields .form-columns select,#send-dialog .web-send-options-fields .form-columns input {width:100%;min-width:0;max-width:100%;padding:11px 12px;box-sizing:border-box;}
+#send-dialog .web-send-options-fields .checkline {display:flex;align-items:center;gap:10px;font-weight:500;font-size:12px;}
+#send-dialog .web-send-options-fields .checkline input {width:16px;height:16px;flex:0 0 auto;}
+#send-dialog .ds-send-warning {border-left:3px solid #82c4a8;padding:8px 12px;background:rgba(130,196,168,.10);border-radius:4px;}
+#send-dialog .dialog-bottom {position:sticky;bottom:0;display:flex;align-items:center;gap:12px;flex:0 0 auto;min-height:68px;padding:14px 26px;}
+#send-dialog .dialog-bottom .btn {max-width:100%;}
+#item-dialog .ds-form-error,#send-dialog .ds-form-error {margin:0;padding:11px 13px;border:1px solid #e8a8a0;background:#fff1ed;color:#a33226;border-radius:9px;line-height:1.5;font-size:12px;}
+#item-dialog .dialog-fields {overflow-y:auto;min-height:0;}
+#item-dialog .dialog-bottom {display:flex;gap:10px;align-items:center;}
+#item-dialog #delete-item {white-space:normal;text-align:center;}
+@media(max-width:590px){
+ #send-dialog.editor-dialog {width:98vw;max-height:96vh;}
+ #send-dialog form {max-height:96vh;}
+ #send-dialog .dialog-top {padding:16px 17px;}
+ #send-dialog .ds-send-fields {padding:17px 15px;gap:15px;}
+ #send-dialog .web-send-mode {grid-template-columns:1fr;gap:7px;}
+ #send-dialog .web-send-mode .ds-send-option {min-height:44px;padding:9px 12px;}
+ #send-dialog .web-send-options-fields .form-columns {grid-template-columns:1fr;}
+ #send-dialog .dialog-bottom {flex-wrap:wrap;gap:8px;padding:11px 15px;}
+ #send-dialog .dialog-bottom .flex-fill {display:none;}
+ #send-dialog #send-submit {flex:1;}
+ #item-dialog .dialog-bottom {flex-wrap:wrap;}
+}
+@media(prefers-color-scheme:dark){
+ #send-dialog .ds-send-option {background:#224643;color:#e9f6ef;border-color:#3b726b;}
+ #send-dialog .web-send-section>select,#send-dialog .web-send-section>textarea,#send-dialog .web-send-section>input,#send-dialog .web-send-options-fields>input {background:#193b3a;color:#f0fff9;border-color:#4a7772;}
+ #item-dialog .ds-form-error,#send-dialog .ds-form-error {background:#502c2c;color:#ffe0d9;border-color:#995548;}
+}

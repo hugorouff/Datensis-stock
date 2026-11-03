@@ -1,0 +1,47 @@
+security:
+    password_hashers:
+        App\Entity\User:
+            algorithm: argon2id
+            migrate_from:
+                - auto
+
+    providers:
+        app_users:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|assets)/
+            security: false
+        main:
+            lazy: true
+            provider: app_users
+            user_checker: App\Security\ActiveUserChecker
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+                default_target_path: app_home
+                always_use_default_target_path: true
+            logout:
+                path: app_logout
+                target: app_login
+                enable_csrf: true
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
+
+    access_control:
+        - { path: ^/contribute/, roles: PUBLIC_ACCESS }
+        - { path: ^/s/, roles: PUBLIC_ACCESS }
+        - { path: ^/api/send-public/, roles: PUBLIC_ACCESS }
+        # Les routes de l extension n utilisent pas les cookies Symfony : jeton opaque temporaire obligatoire.
+        - { path: ^/api/extension/, roles: PUBLIC_ACCESS }
+        - { path: ^/api/admin/, roles: ROLE_ADMIN }
+        - { path: ^/admin$, roles: ROLE_ADMIN }
+        - { path: ^/auth/session$, roles: PUBLIC_ACCESS }
+        - { path: ^/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/register$, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: ROLE_USER }

@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block title %}Première connexion{% endblock %}
+{% block body %}
+<div class="auth-layout ds-auth-layout">
+  <section class="auth-intro ds-auth-intro">
+    <div class="auth-brand"><span class="brand-icon ds-auth-logo">DS</span><span>Datensis <strong>Stock</strong></span></div>
+    <h1>Votre compte, <span>votre mot de passe.</span></h1>
+    <p>Pour préserver le chiffrement, définissez un mot de passe que vous êtes seul à connaître avant d'accéder à Datensis Stock.</p>
+    <div class="auth-points"><span>◈ &nbsp; Mot de passe temporaire à usage initial</span><span>◈ &nbsp; Pas de secret stocké en clair</span><span>◈ &nbsp; Un mot de passe personnel de 16 caractères minimum</span></div>
+  </section>
+  <section class="auth-panel">
+    <div class="auth-card">
+      <div class="mobile-brand">DS · Datensis Stock</div>
+      <div class="eyebrow">Première connexion</div>
+      <h2>Choisir votre mot de passe</h2>
+      <p class="muted">Compte : {{ email }}</p>
+      {% if message %}<div class="inline-error" role="alert">{{ message }}</div>{% endif %}
+      <form method="post" class="form-stack" autocomplete="off" action="{{ path('ds_account_activate') }}">
+        <label>Mot de passe temporaire<input type="password" name="current" autocomplete="off" required></label>
+        <label>Nouveau mot de passe<input type="password" name="new" minlength="16" autocomplete="off" required></label>
+        <label>Confirmer le mot de passe<input type="password" name="confirm" minlength="16" autocomplete="off" required></label>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('first_login') }}">
+        <button class="btn btn-primary btn-full" type="submit">Activer mon compte</button>
+      </form>
+      <p class="auth-hint">Après l'activation, reconnectez-vous avec le nouveau mot de passe. Les administrateurs iront directement à /admin.</p>
+      <form method="post" action="{{ path('app_logout') }}"><input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}"><button type="submit" class="btn btn-full">Se déconnecter</button></form>
+    </div>
+  </section>
+</div>
+{% endblock %}

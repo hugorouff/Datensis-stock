@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+{% block title %}Activer la double authentification{% endblock %}
+{% block body %}
+<div class="auth-layout">
+  <section class="auth-intro"><div class="auth-brand">◆ Datensis <strong>Stock</strong></div>
+    <h1>Protégez votre <span>coffre.</span></h1>
+    <p>Pour protéger les accès de l'entreprise, la double authentification est obligatoire, y compris pour les comptes existants.</p>
+    <div class="auth-points"><span>◈ &nbsp; Aucun compte n'est supprimé</span><span>◈ &nbsp; Vos identifiants restent chiffrés</span><span>◈ &nbsp; Codes de secours à conserver</span></div>
+  </section>
+  <section class="auth-panel"><div class="auth-card" style="max-width:540px">
+    <div class="eyebrow">PROTECTION OBLIGATOIRE · ÉTAPE 2 SUR 2</div>
+    <h2>Activer la 2FA</h2>
+    <p class="muted">Utilisez une application d'authentification compatible TOTP (Aegis, 2FAS, Microsoft Authenticator...). Pas besoin de partager votre mot de passe avec l'application.</p>
+    <div id="enroll-step-1">
+      <form id="enroll-start-form" class="form-stack">
+        <label>Confirmer votre mot de passe principal<input type="password" id="enroll-password" autocomplete="current-password" required minlength="12"></label>
+        <button type="submit" class="btn btn-primary btn-full">Créer ma clé de vérification</button>
+      </form>
+    </div>
+    <div id="enroll-step-2" hidden>
+      <p class="muted">1. Ajoutez un compte dans votre application TOTP avec cette clé privée (ne la communiquez à personne) :</p>
+      <p><code id="enroll-secret" style="user-select:all;overflow-wrap:anywhere"></code></p>
+      <p class="muted">2. Saisissez le code à 6 chiffres affiché par l'application :</p>
+      <form id="enroll-confirm-form" class="form-stack">
+        <label>Code de confirmation<input id="enroll-code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label>
+        <button type="submit" class="btn btn-primary btn-full">Activer et vérifier</button>
+      </form>
+    </div>
+    <div id="enroll-step-3" hidden>
+      <h3>Codes de récupération</h3>
+      <p class="muted">Enregistrez ces 8 codes dans un endroit séparé du coffre. Ils ne seront plus affichés et chaque code ne fonctionne qu'une fois.</p>
+      <pre id="enroll-recovery" style="white-space:pre-wrap;user-select:all;background:#edf3ff;padding:15px;border-radius:8px"></pre>
+      <button id="enroll-copy" type="button" class="btn btn-primary btn-full">Copier les codes</button>
+      <label style="display:flex;gap:10px;align-items:start;margin:16px 0"><input type="checkbox" id="enroll-saved" style="margin-top:4px"> Je confirme avoir enregistré mes codes de secours.</label>
+      <button id="enroll-continue" type="button" class="btn btn-primary btn-full" disabled>Accéder au coffre</button>
+    </div>
+    <p id="enroll-error" role="alert" class="inline-error" hidden></p>
+    <form method="post" action="{{ path('app_logout') }}" style="margin-top:20px"><input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}"><button class="btn btn-full" type="submit">Se déconnecter</button></form>
+  </div></section>
+</div>
+{% endblock %}
+{% block head %}<meta name="vault-csrf" content="{{ csrf_token('vault_api') }}">{% endblock %}
+{% block scripts %}<script defer src="{{ asset('assets/otp-enroll.js') }}"></script>{% endblock %}

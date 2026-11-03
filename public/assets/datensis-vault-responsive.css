@@ -1,0 +1,100 @@
+/* Datensis Stock - Mon coffre: toolbar, folder context and actions responsive.
+   Loaded last so it also corrects the earlier legacy/palette grid overrides. */
+#view-vault,.bw-right,.bw-content,.vault-grid,.vault-list-panel,.vault-details {min-width:0}
+#view-vault .vault-grid {grid-template-columns:minmax(300px,43%) minmax(0,1fr);width:100%;max-width:100%;}
+#view-vault .vault-list-panel {container-type:inline-size;}
+#view-vault .vault-list-panel .list-toolbar {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:15px;align-items:end;min-width:0;}
+#view-vault .list-toolbar .search-field {grid-column:1/-1;width:100%;max-width:none;box-sizing:border-box;}
+#view-vault .list-toolbar .ds-filter-control {min-width:0;max-width:none;display:flex;flex-direction:column;align-items:stretch;gap:5px;}
+#view-vault .list-toolbar .ds-filter-control select,#view-vault .list-toolbar #sort-select {box-sizing:border-box;width:100%;max-width:none;min-width:0;height:40px;}
+#view-vault .list-toolbar #sort-select {grid-column:1/-1;}
+#view-vault .vault-entry {min-width:0;max-width:100%;gap:10px;align-items:center;}
+#view-vault .entry-text {min-width:0;overflow:hidden;}
+#view-vault .entry-text strong,#view-vault .entry-text small {max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#view-vault .entry-text .entry-folder-path {display:inline-flex;align-items:center;align-self:flex-start;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#006D7B;font-size:10px;font-weight:700;background:#E7F5EF;border:1px solid #D2E9DF;border-radius:6px;padding:3px 7px;margin-top:3px;}
+#view-vault .entry-folder-path::before {content:'Dossier :';margin-right:4px;font-weight:500;}
+#view-vault .detail-header {align-items:flex-start;min-width:0;}
+#view-vault .detail-header>div {min-width:0;}
+#view-vault .detail-header h2 {overflow-wrap:anywhere;line-height:1.3;}
+#view-vault .detail-folder-tag {display:inline-flex;max-width:100%;margin-top:9px;padding:5px 9px;border-radius:7px;background:#EAF6F0;color:#005E6D;border:1px solid #D0E8DD;font-size:11px;font-weight:700;overflow-wrap:anywhere;}
+#view-vault .vault-details {overflow-wrap:anywhere;}
+#view-vault .detail-actions {align-items:stretch;gap:8px;}
+#view-vault .detail-actions .btn {max-width:100%;white-space:normal;text-align:center;}
+#view-vault .detail-actions .ds-delete-entry {border-color:#E96148;background:#FFF2EE;color:#B63724;}
+#view-vault .detail-actions .ds-delete-entry:hover {background:#FFE5DE;}
+#view-vault .detail-value {min-width:0;max-width:100%;}
+#view-vault .detail-value-text {overflow-wrap:anywhere;word-break:break-word;}
+#view-vault .ds-vault-hero {max-width:100%;box-sizing:border-box;}
+#view-vault .ds-vault-hero .ds-hero-content {min-width:0;flex:1 1 310px;}
+#view-vault .ds-vault-hero .ds-add-btn {flex:0 1 auto;}
+#view-vault .vault-list {scrollbar-width:thin;}
+.bw-content .quick-tools {min-width:0;max-width:100%;box-sizing:border-box;}
+.bw-content .quick-tools>input {min-width:0;}
+@container (min-width:660px) {
+  #view-vault .vault-list-panel .list-toolbar {grid-template-columns:repeat(3,minmax(0,1fr));}
+  #view-vault .list-toolbar #sort-select {grid-column:auto;}
+}
+@container (max-width:360px) {
+  #view-vault .vault-list-panel .list-toolbar {grid-template-columns:minmax(0,1fr);}
+  #view-vault .list-toolbar .search-field,#view-vault .list-toolbar #sort-select {grid-column:1;}
+}
+@media (max-width:1080px) {
+  #view-vault .vault-grid {grid-template-columns:minmax(0,1fr);}
+  #view-vault .vault-list-panel {border-right:0;border-bottom:1px solid var(--bw-stroke,#D4E7E2);}
+  #view-vault .vault-list {min-height:140px;max-height:330px;}
+  #view-vault .vault-details {min-height:260px;padding:22px;}
+  #view-vault .ds-vault-hero {gap:12px;padding:25px;}
+}
+@media (max-width:700px) {
+  .bw-right {width:100%;}
+  .bw-content {width:100%;max-width:100%;box-sizing:border-box;padding:15px 11px;}
+  .bw-content .quick-tools {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:12px;}
+  .bw-content .quick-tools>strong {grid-column:1/-1;}
+  .bw-content .quick-tools>.btn {min-width:0;white-space:normal;}
+  .bw-content .quick-tools>label {grid-column:1/-1;}
+  .bw-content .quick-tools>input {grid-column:1/-1;width:100%;max-width:none;}
+  #view-vault .ds-vault-hero {flex-direction:row;flex-wrap:wrap;min-height:0;padding:22px 17px;gap:10px;}
+  #view-vault .ds-vault-hero .ds-hero-content {flex:1 0 100%;}
+  #view-vault .ds-vault-hero h1 {font-size:clamp(28px,7vw,38px);}
+  #view-vault .ds-vault-hero .ds-add-btn {flex:1 1 155px;min-width:0;justify-content:center;}
+  #view-vault .vault-grid {border-radius:13px;}
+  #view-vault .vault-details {padding:17px 14px;}
+  #view-vault .detail-actions {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));}
+  #view-vault .detail-actions .btn {width:100%;min-width:0;}
+  #view-vault .detail-header {gap:12px;padding-bottom:15px;}
+  #view-vault .detail-bigmark {width:47px;height:47px;min-width:47px;font-size:23px;}
+  #view-vault .detail-header h2 {font-size:19px;}
+  #view-vault .entry-text .entry-folder-path {font-size:10px;}
+}
+@media (max-width:400px) {
+  #view-vault .detail-actions {grid-template-columns:1fr;}
+  #view-vault .vault-list-panel .list-toolbar {grid-template-columns:1fr;}
+  #view-vault .list-toolbar .search-field,#view-vault .list-toolbar #sort-select {grid-column:1;}
+  #view-vault .ds-vault-hero .ds-add-btn {flex-basis:100%;}
+}
+@media (prefers-color-scheme:dark) {
+  #view-vault .entry-text .entry-folder-path,#view-vault .detail-folder-tag {background:#214C4B;color:#B7EFD9;border-color:#39716A;}
+  #view-vault .detail-actions .ds-delete-entry {background:#472C30;color:#FFBEB0;border-color:#9E5452;}
+  #view-vault .detail-actions .ds-delete-entry:hover {background:#573236;}
+}
+
+/* Repartition robuste : aucun libelle tronque, meme en zoom a 125-200 %. */
+#view-vault .vault-grid{min-width:0;max-width:100%;}
+#view-vault .vault-list-panel .list-toolbar{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;align-items:end!important;min-width:0;overflow:visible!important;}
+#view-vault .list-toolbar .ds-filter-control{width:100%;min-width:0;max-width:100%;overflow:visible!important;}
+#view-vault .list-toolbar .ds-filter-control>span{display:block;width:100%;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere;font-size:12px;line-height:1.45;}
+#view-vault .list-toolbar .ds-filter-control select,
+#view-vault .list-toolbar #sort-select{appearance:auto;width:100%!important;min-width:0!important;max-width:100%!important;min-height:44px!important;padding:9px 26px 9px 11px!important;text-overflow:clip!important;font-size:12px!important;line-height:1.4!important;}
+#view-vault .list-toolbar .search-field{grid-column:1/-1!important;min-width:0!important;}
+#view-vault .list-toolbar .search-field input{min-width:0;max-width:100%;width:100%;box-sizing:border-box;}
+#view-vault .list-toolbar #sort-select{grid-column:1/-1!important;}
+@media(min-width:1450px){
+ #view-vault .vault-grid{grid-template-columns:minmax(385px,43%) minmax(0,1fr);}
+}
+@media(max-width:1180px){
+ #view-vault .vault-grid{grid-template-columns:minmax(0,1fr)!important;}
+}
+@media(max-width:550px){
+ #view-vault .vault-list-panel .list-toolbar{grid-template-columns:minmax(0,1fr)!important;}
+ #view-vault .list-toolbar .search-field,#view-vault .list-toolbar #sort-select{grid-column:1!important;}
+}

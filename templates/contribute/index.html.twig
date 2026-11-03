@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block title %}Dépôt confidentiel{% endblock %}
+{% block head %}
+<meta name="invite-csrf" content="{{ csrf_token('ds_contribute') }}">
+<meta name="invite-public-key" content="{{ public_key }}">
+<meta name="invite-company" content="{{ folder }}">
+{% endblock %}
+{% block body %}
+<main class="ds-public-container">
+  <div class="ds-public-brand"><span class="ds-public-logo">DS</span> <strong>Datensis Stock</strong></div>
+  <section class="ds-public-card">
+    <p class="ds-eyebrow">INVITATION INDIVIDUELLE</p>
+    <h1>Déposer des identifiants en sécurité</h1>
+    <p>Une invitation vous a été adressée à <strong>{{ recipient }}</strong> pour le dossier <strong>{{ folder }}</strong>.</p>
+    <p>Votre dépôt sera chiffré dans ce navigateur avant transmission. L’expéditeur pourra seul en déchiffrer le contenu. Cette invitation permet un dépôt unique, éventuellement composé de plusieurs identifiants.</p>
+    <div id="invite-error" role="alert" class="inline-error" hidden></div>
+    <form id="invite-consent" class="form-stack">
+      <label class="checkline"><input type="checkbox" id="invite-consent-check" required> Je confirme être le destinataire prévu et consens à transmettre ces identifiants à l’expéditeur pour leur classement dans son coffre.</label>
+      <p class="muted">Ne transmettez que des accès que vous êtes autorisé à communiquer. Le destinataire de ce dépôt pourra consulter les informations transmises. Votre accord est enregistré. Les données reçues sont destinées au propriétaire de ce coffre, qui les conserve jusqu’à leur suppression. Vous ne pourrez plus modifier un dépôt après son envoi.</p>
+      <button type="submit" class="btn primary">Accepter et recevoir mon code par e-mail</button>
+    </form>
+    <form id="invite-code-form" class="form-stack" hidden>
+      <h2>Vérifier votre adresse e-mail</h2>
+      <label>Code reçu par e-mail<input type="text" inputmode="numeric" autocomplete="one-time-code" id="invite-code" minlength="6" maxlength="6" pattern="[0-9]{6}" required></label>
+      <button class="btn primary" type="submit">Vérifier le code</button>
+    </form>
+    <form id="invite-deposit" class="form-stack" hidden>
+      <h2>Vos identifiants à déposer</h2>
+      <p class="muted">Ils seront enregistrés sous <strong>{{ folder }}</strong>. Indiquez éventuellement un sous-dossier (ex. : Comptabilité / Banque).</p>
+      <div id="invite-credentials"></div>
+      <button type="button" class="btn outline" id="invite-add">+ Ajouter un autre identifiant</button>
+      <button type="submit" class="btn primary" id="invite-submit">Chiffrer et envoyer définitivement</button>
+    </form>
+    <div id="invite-done" hidden><h2>Dépôt reçu</h2><p>Les informations ont été chiffrées avant l’envoi. Le lien est désormais inutilisable.</p></div>
+  </section>
+</main>
+{% endblock %}
+{% block scripts %}<script defer src="{{ asset('assets/contribute.js') }}"></script>{% endblock %}

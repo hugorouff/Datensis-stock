@@ -1,0 +1,34 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const src=fs.readFileSync('chrome-extension/popup.js','utf8');
+const html=fs.readFileSync('chrome-extension/popup.html','utf8');
+const ids=new Set([...html.matchAll(/\bid="([\w-]+)"/g)].map(m=>m[1]));
+for(const name of ['idle-minutes','send-text','send-name','send-expiry','send-max','send-password','send-created','send-result-link','send-copy','send-new','send-refresh','send-options']){
+  assert.ok(ids.has(name),`Champ absent : ${name}`);
+}
+assert.ok(src.includes('Date.now() - lastActivityAt < idleMinutes * 60000'));
+assert.ok(src.includes('setInterval(()=>{checkInactivity();updateIdleCountdown();},1000)'));
+assert.ok(src.includes('armInactivityWatchdog();'));
+assert.ok(src.includes("['pointerdown','keydown','input','wheel','touchstart']"));
+assert.ok(!src.includes("'pointermove'"));
+assert.ok(src.includes('if(checkInactivity())return'));
+assert.ok(src.includes('event.stopImmediatePropagation()'));
+assert.ok(src.includes("document.addEventListener(type,recordActivity,{capture:true})"));
+assert.ok(src.includes("window.addEventListener('focus',checkInactivity)"));
+assert.ok(!src.includes('if(document.hidden)lock()'));
+assert.ok(src.includes('datensisStockLockMinutes:0'));
+assert.ok(src.includes("chrome.storage.local.set({datensisStockLockMinutes:n})"));
+assert.ok(src.includes("$('send-result-link').value=''"));
+assert.ok(src.includes("$('send-form').reset()"));
+assert.ok(src.includes("if(!popupActive(ticket)||checkInactivity()||!state.key)return;"));
+assert.ok(html.includes('<details id="send-options"'));
+assert.ok(!html.includes('id="send-editor-area"'));
+assert.ok(html.includes('id="send-text" required'));
+assert.ok(!html.includes('id="send-name" required'));
+assert.ok(html.includes('option value="24" selected'));
+assert.ok(src.includes("await fetchApi('/sends','POST'"));
+assert.ok(src.includes("await encrypt({kind:'text',name,text,hidden},sendKey)"));
+assert.ok(src.includes("$('send-result-link').value=link"));
+assert.ok(src.includes('catch(err){if(popupActive(ticket)&&state.key)console.warn'));
+console.log('OK: verrouillage inactivite, persistence de preference, Send simplifie, securite du lien');

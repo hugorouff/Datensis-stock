@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "Datensis Stock | Mini-coffre",
+  "short_name": "Datensis Stock",
+  "description": "Gestionnaire de mots de passe : remplissage et proposition de sauvegarde sur les sites HTTPS, avec consentement.",
+  "version": "1.9.1",
+  "action": {
+    "default_title": "Datensis Stock — ouvrir le panneau de coffre",
+    "default_icon": {
+      "16": "icons/16.png",
+      "32": "icons/32.png",
+      "48": "icons/48.png"
+    }
+  },
+  "icons": {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "sidePanel",
+    "alarms",
+    "scripting",
+    "privacy"
+  ],
+  "host_permissions": [
+    "http://localhost/*",
+    "http://127.0.0.1/*",
+    "https://*/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'none';"
+  },
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "side_panel": {
+    "default_path": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://127.0.0.1/*",
+        "http://localhost/*",
+        "https://*/*"
+      ],
+      "js": [
+        "site-assistant.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}

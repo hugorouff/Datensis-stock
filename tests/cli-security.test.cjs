@@ -1,0 +1,11 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const root=path.join(__dirname,'..');
+const user=fs.readFileSync(path.join(root,'src/Entity/User.php'),'utf8');
+const cli=fs.readFileSync(path.join(root,'src/Command/ProvisionAdminCommand.php'),'utf8');
+const api=fs.readFileSync(path.join(root,'src/Controller/VaultApiController.php'),'utf8');
+assert(user.includes('adminPasswordHash"] = $this->adminPasswordHash === null'));
+assert(cli.includes('setHidden(true)'));
+assert(cli.includes('strlen($pass) < 20'));
+assert(api.includes("'invitations' => array_map"));
+assert(api.includes('UPDATE vault_invitation SET encrypted_private_key'));
+console.log('Administration: mot de passe masqué, hash session neutralisé, rekey des clés privées d’invitation présent.');

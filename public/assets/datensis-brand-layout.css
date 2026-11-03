@@ -1,0 +1,15 @@
+/* Precise auth brand layout, loaded last: keeps DS logo above hero title. */
+.ds-auth-layout .ds-auth-intro{position:relative;min-height:100vh;padding:clamp(112px,15vh,160px) clamp(25px,6vw,95px) clamp(55px,8vh,95px);justify-content:center;overflow:hidden}
+.ds-auth-layout .ds-auth-intro>.auth-brand{position:absolute!important;top:clamp(26px,4vh,46px)!important;left:clamp(25px,6vw,95px)!important;right:auto;transform:none!important;margin:0;display:flex;gap:10px;align-items:center;z-index:5!important;font-size:clamp(19px,1.65vw,23px);font-weight:550;line-height:1.2;letter-spacing:-.025em;color:#FFFFFF;white-space:nowrap}
+.ds-auth-layout .ds-auth-intro>.auth-brand strong{font-weight:800;color:#FFFFFF}
+.ds-auth-layout .ds-auth-intro>.auth-brand .brand-icon{height:47px;width:47px;min-height:47px;min-width:47px;flex:0 0 47px;display:grid;place-items:center;border-radius:14px 14px 14px 4px;font-size:17px;letter-spacing:-.04em;transform:none;box-shadow:0 7px 18px #003E4B35}
+.ds-auth-layout .ds-auth-intro>h1{position:relative;z-index:2;margin:0 0 24px;font-size:clamp(41px,5.2vw,68px);max-width:540px;line-height:1.08;letter-spacing:-.055em}
+.ds-auth-layout .ds-auth-intro>p,.ds-auth-layout .ds-auth-intro>.auth-points{position:relative;z-index:2}
+.ds-auth-layout .ds-auth-intro>.auth-points{margin-top:40px}
+.ds-auth-layout .auth-card .mobile-brand{color:#00778B;font-weight:780;letter-spacing:-.03em}
+.ds-auth-layout .auth-card h2{line-height:1.15}
+.recipient-page .recipient-header{display:flex;align-items:center;gap:13px;margin-bottom:24px;font-size:20px;font-weight:800}
+.recipient-page .recipient-header .ds-monogram{height:44px;width:44px;flex:0 0 44px;font-size:18px;transform:none}
+.bw-sidebar .bw-brand.ds-brand .ds-monogram{width:48px;height:48px;flex:0 0 48px;transform:none;font-size:19px}
+@media(max-width:780px){.ds-auth-layout .ds-auth-intro{min-height:320px;padding:104px 30px 46px}.ds-auth-layout .ds-auth-intro>.auth-brand{top:25px!important;left:30px!important}.ds-auth-layout .ds-auth-intro>h1{font-size:clamp(33px,6vw,45px)}.ds-auth-layout .ds-auth-intro>.auth-points{margin-top:23px}.ds-auth-layout .ds-auth-halo{opacity:.24}}
+@media(max-width:460px){.ds-auth-layout .ds-auth-intro{min-height:270px;padding:94px 22px 35px}.ds-auth-layout .ds-auth-intro>.auth-brand{top:22px!important;left:22px!important;font-size:19px}.ds-auth-layout .ds-auth-intro>.auth-brand .brand-icon{width:40px;height:40px;min-width:40px;min-height:40px;font-size:15px}.ds-auth-layout .ds-auth-intro>h1{font-size:34px}.ds-auth-layout .ds-auth-intro>p{font-size:14px}.ds-auth-layout .ds-auth-intro>.auth-points{display:none}}

@@ -1,0 +1,71 @@
+/* Console d'administration - palette officielle Datensis Stock */
+.ds-admin-standalone{--admin-blue:#00778B;--admin-dark:#005A69;--admin-coral:#E96148;--admin-mint:#82C4A8;--admin-stroke:#CFE5E1;--admin-ink:#153B44;--admin-muted:#55777D;max-width:1440px;margin:0 auto;padding:0 clamp(16px,3vw,46px) 85px;color:var(--admin-ink);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px}
+.ds-admin-standalone *, .ds-admin-standalone *:before, .ds-admin-standalone *:after{box-sizing:border-box}
+.ds-admin-standalone button{font:inherit;cursor:pointer}
+.ds-admin-standalone button:disabled{opacity:.45;cursor:not-allowed}
+.ds-admin-header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:24px 0;border-bottom:1px solid var(--admin-stroke)}
+.ds-admin-brand{display:flex;align-items:center;gap:13px;min-width:0}
+.ds-admin-logo{display:grid;place-items:center;flex:0 0 46px;width:46px;height:46px;background:var(--admin-blue);color:white;border-radius:14px 14px 14px 4px;font-size:18px;font-weight:900;letter-spacing:-1px;box-shadow:0 8px 20px #00778B25}
+.ds-admin-brand strong{display:block;font-size:18px;letter-spacing:-.04em;line-height:1.3}
+.ds-admin-brand small{display:block;margin-top:3px;letter-spacing:.14em;color:var(--admin-blue);font-size:9px;font-weight:800}
+.ds-admin-header-actions{display:flex;align-items:center;gap:18px}.ds-admin-user{color:var(--admin-muted);font-size:12px;overflow-wrap:anywhere}
+.ds-admin-logout{margin:0}.ds-admin-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:39px 0 25px}
+.ds-admin-eyebrow{letter-spacing:.18em;font-size:10px;font-weight:850;color:var(--admin-blue)}
+.ds-admin-heading h1{font-size:clamp(30px,4vw,46px);line-height:1.14;margin:8px 0 10px;letter-spacing:-.055em;color:var(--admin-ink)}
+.ds-admin-heading p{color:var(--admin-muted);max-width:610px;line-height:1.65;margin:0}
+.ds-admin-trust{display:inline-flex;align-items:center;white-space:nowrap;background:#EDF8F3;border:1px solid var(--admin-mint);border-radius:30px;padding:9px 14px;color:#1B695F;font-size:11px;font-weight:750}
+.ds-admin-tabs{display:flex;gap:8px;overflow-x:auto;margin:8px 0 28px;padding-bottom:10px;border-bottom:1px solid var(--admin-stroke)}
+.ds-admin-tabs .ds-admin-tab{border:0;background:transparent;border-radius:10px;color:var(--admin-muted);padding:13px 17px;white-space:nowrap;font-weight:700}
+.ds-admin-tabs .ds-admin-tab.active{background:var(--admin-blue);color:white;box-shadow:0 6px 17px #00778B20}
+.ds-admin-tabs .ds-admin-tab:hover:not(.active){background:#EAF5F5;color:var(--admin-blue)}
+.ds-admin-feedback{border:1px solid var(--admin-mint);background:#E7F7EF;color:#185F54;border-radius:12px;padding:14px 17px;margin:0 0 18px}
+.ds-admin-feedback.error{border-color:#E96148;background:#FFF0EC;color:#9F3325}
+.ds-admin-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.ds-admin-metrics article,.ds-admin-panel,.ds-admin-table-scroll,.ds-admin-share,.ds-admin-filter{border:1px solid var(--admin-stroke);background:#fff;border-radius:19px;box-shadow:0 9px 26px #00778B0B}
+.ds-admin-metrics article{padding:24px;display:flex;flex-direction:column;gap:8px}
+.ds-admin-metrics article span{font-size:12px;color:var(--admin-muted);font-weight:650}
+.ds-admin-metrics article strong{font-size:clamp(29px,3.3vw,42px);font-weight:770;letter-spacing:-.05em;color:var(--admin-blue);line-height:1.25}
+.ds-admin-metrics article small{font-size:11px;color:var(--admin-muted)}
+.ds-admin-info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px;margin-top:20px}
+.ds-admin-panel{padding:29px}
+.ds-admin-panel h2,.ds-admin-toolbar h2{font-size:21px;color:var(--admin-ink);letter-spacing:-.04em;margin:0 0 9px}
+.ds-admin-panel p,.ds-admin-toolbar p,.ds-admin-muted{font-size:13px;color:var(--admin-muted);line-height:1.65}
+.ds-admin-panel p{min-height:80px}
+.ds-admin-btn{border:1px solid var(--admin-blue);background:var(--admin-blue);color:#fff;border-radius:10px;padding:11px 16px;min-height:42px;font-size:12px!important;font-weight:740!important;text-align:center;white-space:nowrap}
+.ds-admin-btn:hover:not(:disabled){background:var(--admin-dark)}
+.ds-admin-btn.ds-admin-btn-outline{background:white;color:var(--admin-blue);border:1px solid var(--admin-stroke)}
+.ds-admin-btn.ds-admin-btn-outline:hover:not(:disabled){background:#EAF5F5}
+.ds-admin-btn.ds-admin-btn-danger{background:#FFF0EC;color:#A83E2C;border:1px solid #F4C4B9}
+.ds-admin-btn.ds-admin-btn-danger:hover:not(:disabled){background:#FFE3DD}
+.ds-admin-btn.ds-admin-btn-small{padding:6px 10px;min-height:34px;font-size:11px!important}
+.ds-admin-toolbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:10px 0 18px}
+.ds-admin-toolbar p{margin:0}.ds-admin-filter{padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.ds-admin-filter label{font-size:12px;font-weight:700}.ds-admin-filter input{min-width:220px;width:min(100%,430px)}
+.ds-admin-standalone input:not([type=checkbox]){border:1px solid var(--admin-stroke);background:#fff;padding:12px 13px;color:var(--admin-ink);border-radius:10px;font-size:14px}
+.ds-admin-standalone input[type=checkbox]{accent-color:var(--admin-blue);height:17px;width:17px;flex:0 0 17px}
+.ds-admin-standalone input:focus{outline:2px solid var(--admin-mint);outline-offset:1px}
+.ds-admin-table-scroll{overflow-x:auto}
+.ds-admin-table{width:100%;border-collapse:collapse;min-width:850px;text-align:left}
+.ds-admin-table th{background:#EAF5F4;color:#376C70;font-size:10px;letter-spacing:.085em;text-transform:uppercase;white-space:nowrap;padding:15px}
+.ds-admin-table td{padding:17px 15px;border-top:1px solid var(--admin-stroke);color:var(--admin-ink);font-size:12px;vertical-align:middle}
+.ds-admin-table td strong{display:block;font-size:12px;overflow-wrap:anywhere}.ds-admin-table td small{display:block;margin-top:4px;color:var(--admin-muted)}
+.ds-admin-badge{padding:5px 9px;border-radius:16px;display:inline-block;font-size:10px;font-weight:730;white-space:nowrap}
+.ds-admin-badge.role{background:#E5F1F7;color:#086478}.ds-admin-badge.normal{background:#F0F5F4;color:#507071}
+.ds-admin-badge.active{background:#E5F7EC;color:#287354}.ds-admin-badge.disabled{background:#FFF1EC;color:#B14D33}
+.ds-admin-action-cell{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.ds-admin-paging{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:18px;color:var(--admin-muted)}
+.ds-admin-share-list{display:grid;gap:11px}.ds-admin-share{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px}
+.ds-admin-share strong,.ds-admin-share small{display:block;overflow-wrap:anywhere}.ds-admin-share small{font-size:12px;color:var(--admin-muted);margin-top:7px}
+.ds-admin-dialog{box-sizing:border-box;max-width:min(520px,calc(100vw - 28px));width:100%;border:1px solid var(--admin-stroke);border-radius:22px;padding:27px;color:var(--admin-ink);background:#fff;box-shadow:0 25px 70px #003E4B38}
+.ds-admin-dialog::backdrop{background:#062D37A8;backdrop-filter:blur(3px)}
+.ds-admin-dialog h2{margin:0 0 11px;font-size:23px;letter-spacing:-.04em;color:var(--admin-ink)}
+.ds-admin-dialog p{font-size:12px;color:var(--admin-muted);line-height:1.7}
+.ds-admin-dialog label:not(.ds-admin-check){display:flex;flex-direction:column;gap:7px;margin:15px 0;font-size:12px;font-weight:700}
+.ds-admin-dialog input:not([type=checkbox]){width:100%;box-sizing:border-box}
+.ds-admin-check{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:13px;font-weight:550}
+.ds-admin-dialog-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:10px;margin-top:24px}
+.ds-admin-delete-summary{background:#FFF1EC;color:#7C392E;border:1px solid #F5CBC2;border-radius:11px;padding:12px 17px;font-size:12px}
+.ds-admin-delete-summary p{margin:5px 0;color:#7C392E}
+@media(prefers-color-scheme:dark){.ds-admin-standalone{--admin-ink:#E7F5F3;--admin-muted:#AAC8C6;--admin-stroke:#39656A;background:#102A30;color:#E7F5F3}.ds-admin-standalone .ds-admin-trust{background:#20453E;color:#D5F0E7}.ds-admin-metrics article,.ds-admin-panel,.ds-admin-table-scroll,.ds-admin-share,.ds-admin-filter,.ds-admin-dialog{background:#18353A;color:#E7F5F3}.ds-admin-table th{background:#20474B;color:#C8E5E2}.ds-admin-table td{color:#E7F5F3}.ds-admin-standalone input:not([type=checkbox]),.ds-admin-btn.ds-admin-btn-outline{background:#1F4448;color:#E7F5F3;border-color:#427179}.ds-admin-badge.normal{background:#29474C;color:#D5E9E6}}
+@media(max-width:900px){.ds-admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ds-admin-info-grid{grid-template-columns:1fr}.ds-admin-panel p{min-height:0}}
+@media(max-width:620px){.ds-admin-header,.ds-admin-header-actions,.ds-admin-heading,.ds-admin-toolbar{flex-wrap:wrap}.ds-admin-header{padding:15px 0}.ds-admin-user{width:100%}.ds-admin-trust{white-space:normal}.ds-admin-metrics{gap:10px}.ds-admin-metrics article{padding:16px}.ds-admin-metrics article strong{font-size:29px}.ds-admin-toolbar>button{width:100%}.ds-admin-filter{display:block}.ds-admin-filter input{width:100%;margin-top:8px}.ds-admin-dialog{padding:20px}}

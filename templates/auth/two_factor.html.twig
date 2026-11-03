@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+{% block title %}Code de connexion{% endblock %}
+{% block body %}
+<div class="auth-layout ds-auth-layout">
+  <section class="auth-intro ds-auth-intro"><div class="auth-brand"><span class="brand-icon ds-auth-logo">DS</span><span>Datensis <strong>Stock</strong></span></div>
+    <h1>Confirmez votre <span>connexion.</span></h1>
+    <p>Un code temporaire protège votre compte. Aucun logiciel d'authentification n'est nécessaire.</p></section>
+  <section class="auth-panel"><div class="auth-card">
+    <div class="eyebrow">VÉRIFICATION PAR E-MAIL · BREVO</div>
+    <h2>Vérifier mon identité</h2>
+    <p class="muted">Un code à 6 chiffres sera envoyé à <strong>{{ email }}</strong>. Il expire après 5 minutes.</p>
+    <p id="otp-send-status" class="muted" role="status">Envoi en cours…</p>
+    <form id="otp-page-form" class="form-stack">
+      <label>Code reçu par e-mail<input id="otp-page-code" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" autofocus placeholder="000000"></label>
+      <button class="btn btn-primary btn-full">Vérifier et continuer</button>
+    </form>
+    <button type="button" id="otp-page-resend" class="btn btn-full">Renvoyer un code</button>
+    <p id="otp-page-error" class="inline-error" role="alert" hidden></p>
+    <form method="post" action="{{ path('app_logout') }}" style="margin-top:20px"><input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}"><button type="submit" class="btn btn-full">Se déconnecter</button></form>
+  </div></section>
+</div>
+{% endblock %}
+{% block head %}<meta name="twofa-csrf" content="{{ csrf_token('2fa') }}">{% endblock %}
+{% block scripts %}<script defer src="{{ asset('assets/otp-page.js') }}"></script>{% endblock %}

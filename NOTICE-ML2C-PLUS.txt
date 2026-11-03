@@ -1,0 +1,30 @@
+ML2C VAULT PLUS - INSTALLATION WINDOWS (PROTOTYPE)
+
+1. Faire une copie de sauvegarde de l'ancien dossier bitwarden, en particulier
+   var/data.db, .env.local, composer.lock et les fichiers personnels.
+2. Decompresser ce projet dans votre dossier de travail, en conservant var/,
+   .env.local, composer.lock et vendor/ existants. Ne pas ecraser ces donnees.
+3. Ouvrir PowerShell dans le dossier du projet.
+4. Executer, selon les dependances necessaires :
+      composer install
+      $env:DATABASE_URL = 'sqlite:///%kernel.project_dir%/var/data.db'
+      php bin/console cache:clear
+      php bin/console doctrine:migrations:migrate --no-interaction
+      php -S 127.0.0.1:8001 -t public public/router.php
+5. Aller sur http://127.0.0.1:8001/login puis /actions.
+
+Aucune nouvelle migration SQL n'a ete ajoutee : etiquttes, revue et autres
+metadonnees sont dans les charges utiles chiffrees des fiches.
+
+EXTENSION CHROME / EDGE
+- Ouvrir chrome://extensions ou edge://extensions.
+- Activer manuellement Mode developpeur et cliquer Charger l'extension non empaquetee.
+- Selectionner le dossier chrome-extension a la racine du projet.
+- Epingler ML2C Vault. L'extension reste installee sur ce profil de navigateur.
+- Vous pouvez lancer OUVRIR-INSTALLATION-EXTENSION.ps1 pour ouvrir les ecrans,
+  mais le script n'active pas le mode developpeur.
+- Pour installation en un clic, publier sur le store. Pour installation
+  silencieuse, demander a l'administrateur des navigateurs geres.
+
+ATTENTION : logiciel experimental, 2FA desactivee. Ne pas stocker de vrais
+secrets professionnels sans audit, sauvegarde chiffree et tests de restauration.

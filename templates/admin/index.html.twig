@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+{% block title %}Administration{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ asset('assets/datensis-admin.css') }}?v=20261029-2">{% endblock %}
+{% block body %}
+<main class="ds-admin-standalone">
+  <header class="ds-admin-header">
+    <div class="ds-admin-brand"><span class="ds-admin-logo" aria-hidden="true">DS</span><span><strong>Datensis Stock</strong><small>ESPACE ADMINISTRATEUR</small></span></div>
+    <div class="ds-admin-header-actions"><span class="ds-admin-user">{{ app.user.userIdentifier }}</span><form method="post" action="{{ path('app_logout') }}" class="ds-admin-logout"><input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}"><button type="submit" class="ds-admin-btn ds-admin-btn-outline">Se déconnecter</button></form></div>
+  </header>
+  <section class="ds-admin-heading"><div><span class="ds-admin-eyebrow">CONSOLE DE GESTION</span><h1>Administration</h1><p>Comptes, accès et partages. Aucun secret de coffre n'est consultable ici.</p></div><span class="ds-admin-trust">Gestion sécurisée des accès</span></section>
+  <nav class="ds-admin-tabs" aria-label="Rubriques administrateur">
+    <button type="button" class="ds-admin-tab active" data-admin-tab="overview" aria-current="page">Vue générale</button>
+    <button type="button" class="ds-admin-tab" data-admin-tab="users">Utilisateurs</button>
+    <button type="button" class="ds-admin-tab" data-admin-tab="shares">Partages</button>
+    <button type="button" class="ds-admin-tab" data-admin-tab="invitations">Invitations</button>
+    <button type="button" class="ds-admin-tab" data-admin-tab="audit">Journal d'activité</button>
+  </nav>
+  <p id="admin-feedback" class="ds-admin-feedback" role="status" aria-live="polite" hidden></p>
+  <section id="admin-page-overview" data-admin-page="overview">
+    <div class="ds-admin-metrics">
+      <article><span>Comptes</span><strong id="metric-accounts">—</strong><small>Enregistrés</small></article>
+      <article><span>Utilisateurs actifs</span><strong id="metric-active">—</strong><small>Peuvent se connecter</small></article>
+      <article><span>Comptes suspendus</span><strong id="metric-disabled">—</strong><small>Connexion bloquée</small></article>
+      <article><span>Partages non révoqués</span><strong id="metric-shares">—</strong><small>Hors refus</small></article>
+    </div>
+    <div class="ds-admin-info-grid">
+      <article class="ds-admin-panel"><h2>Gestion des comptes</h2><p>Ajoutez un utilisateur avec un mot de passe temporaire, modifiez son adresse, son rôle ou son état, ou supprimez son compte après vérification des données concernées.</p><button class="ds-admin-btn" type="button" data-open-page="users">Gérer les utilisateurs</button></article>
+      <article class="ds-admin-panel"><h2>Confidentialité du coffre</h2><p>L'administrateur gère les comptes et les droits, mais ne peut pas afficher les mots de passe chiffrés. Il ne peut pas réinitialiser le mot de passe d'un coffre déjà initialisé.</p><button class="ds-admin-btn ds-admin-btn-outline" type="button" data-open-page="audit">Consulter le journal</button></article>
+    </div>
+  </section>
+  <section id="admin-page-users" data-admin-page="users" hidden>
+    <div class="ds-admin-toolbar"><div><h2>Comptes utilisateurs</h2><p id="admin-users-count" class="ds-admin-muted">Recherche et gestion des comptes</p></div><button type="button" id="admin-create-open" class="ds-admin-btn">+ Ajouter un compte</button></div>
+    <div class="ds-admin-filter"><label for="admin-user-search">Rechercher par adresse e-mail</label><input id="admin-user-search" type="search" autocomplete="off" placeholder="Ex. h.rou" maxlength="100"></div>
+    <div class="ds-admin-table-scroll"><table class="ds-admin-table"><thead><tr><th>Compte</th><th>Rôle</th><th>État</th><th>Coffre</th><th>Dernière connexion</th><th>Actions</th></tr></thead><tbody id="admin-users"><tr><td colspan="6">Chargement des comptes…</td></tr></tbody></table></div>
+    <div class="ds-admin-paging"><button type="button" id="admin-prev" class="ds-admin-btn ds-admin-btn-outline">Précédent</button><span id="admin-page-label">Page 1</span><button type="button" id="admin-next" class="ds-admin-btn ds-admin-btn-outline">Suivant</button></div>
+  </section>
+  <section id="admin-page-shares" data-admin-page="shares" hidden>
+    <div class="ds-admin-toolbar"><div><h2>Partages entre comptes</h2><p>Accords et autorisations entre utilisateurs. La révocation ne retire pas une copie déjà sauvegardée par le destinataire.</p></div><button id="admin-shares-reload" class="ds-admin-btn ds-admin-btn-outline" type="button">Actualiser</button></div>
+    <div id="admin-shares" class="ds-admin-share-list"><p>Chargement…</p></div>
+  </section>
+  <section id="admin-page-invitations" data-admin-page="invitations" hidden>
+    <div class="ds-admin-toolbar"><div><h2>Liens de dépôt externes</h2><p>Suivi des invitations historiques : destinataires, expiration, dépôt et révocation. Aucun secret transmis n'est lisible ici.</p></div><button id="admin-invites-reload" class="ds-admin-btn ds-admin-btn-outline" type="button">Actualiser</button></div>
+    <div id="admin-invitations" class="ds-admin-share-list"><p>Chargement…</p></div>
+  </section>
+  <section id="admin-page-audit" data-admin-page="audit" hidden>
+    <div class="ds-admin-toolbar"><div><h2>Journal d'administration</h2><p>Les 100 dernières actions. Aucun mot de passe ni contenu chiffré n'est journalisé.</p></div><button id="admin-audit-reload" class="ds-admin-btn ds-admin-btn-outline" type="button">Actualiser</button></div>
+    <div class="ds-admin-table-scroll"><table class="ds-admin-table"><thead><tr><th>Date</th><th>Action</th><th>Administrateur</th><th>Compte concerné</th></tr></thead><tbody id="admin-audit"><tr><td colspan="4">Chargement…</td></tr></tbody></table></div>
+  </section>
+</main>
+<dialog id="admin-create-dialog" class="ds-admin-dialog"><form id="admin-create-form" method="dialog" novalidate><h2>Ajouter un compte</h2><p>Un mot de passe temporaire sera généré et affiché une seule fois. L'utilisateur devra le remplacer à sa première connexion.</p><label>Adresse e-mail<input id="admin-create-email" name="email" type="email" maxlength="180" required autocomplete="off"></label><label class="ds-admin-check"><input id="admin-create-role" type="checkbox"> Donner le rôle administrateur</label><div class="ds-admin-dialog-actions"><button type="button" data-close-dialog class="ds-admin-btn ds-admin-btn-outline">Annuler</button><button type="submit" class="ds-admin-btn">Créer le compte</button></div></form></dialog>
+<dialog id="admin-edit-dialog" class="ds-admin-dialog"><form id="admin-edit-form" method="dialog" novalidate><h2>Modifier un compte</h2><p id="admin-edit-caption" class="ds-admin-muted"></p><label>Adresse e-mail<input id="admin-edit-email" type="email" maxlength="180" required></label><label class="ds-admin-check"><input id="admin-edit-role" type="checkbox"> Rôle administrateur</label><label class="ds-admin-check"><input id="admin-edit-disabled" type="checkbox"> Suspendre ce compte (bloquer la connexion)</label><div class="ds-admin-dialog-actions"><button type="button" data-close-dialog class="ds-admin-btn ds-admin-btn-outline">Annuler</button><button type="submit" class="ds-admin-btn">Enregistrer</button></div></form></dialog>
+<dialog id="admin-delete-dialog" class="ds-admin-dialog ds-admin-delete-dialog"><form id="admin-delete-form" method="dialog" novalidate><h2>Supprimer définitivement le compte</h2><p id="admin-delete-caption" class="ds-admin-muted"></p><div id="admin-delete-preview" class="ds-admin-delete-summary"></div><p>Cette opération est irréversible : coffre chiffré, liens Send, invitations, partages et sessions associés seront supprimés. Sauvegardez la base avant de continuer.</p><label>Recopiez l'adresse e-mail exacte<input id="admin-delete-confirm" type="email" autocomplete="off" required></label><div class="ds-admin-dialog-actions"><button type="button" data-close-dialog class="ds-admin-btn ds-admin-btn-outline">Annuler</button><button type="submit" class="ds-admin-btn ds-admin-btn-danger">Supprimer définitivement</button></div></form></dialog>
+<dialog id="admin-credential-dialog" class="ds-admin-dialog"><h2>Compte créé</h2><p>Transmettez ce mot de passe temporaire par un canal sûr. Il ne sera plus affiché ensuite. L'utilisateur devra en choisir un nouveau à sa première connexion.</p><label>Adresse e-mail<input id="admin-generated-email" readonly></label><label>Mot de passe temporaire<input id="admin-generated-password" readonly></label><div class="ds-admin-dialog-actions"><button id="admin-copy-password" class="ds-admin-btn ds-admin-btn-outline" type="button">Copier</button><button id="admin-credential-close" class="ds-admin-btn" type="button">J'ai sauvegardé le mot de passe</button></div></dialog>
+<script>window.DS_ADMIN_CSRF={{ csrf_token('vault_api')|json_encode|raw }}; window.DS_ADMIN_EMAIL={{ app.user.userIdentifier|json_encode|raw }}; window.DS_ADMIN_ID={{ app.user.id|json_encode|raw }};</script>
+<script src="{{ asset('assets/datensis-admin.js') }}?v=20261030-4" defer></script>
+{% endblock %}

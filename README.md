@@ -1,73 +1,153 @@
-# ML2C Vault — Projet Symfony complet
+# Datensis Stock
 
-**Version de développement (28 octobre 2026)**. Application de coffre-fort avec identité ML2C Conseil, interface en bleu pétrole `#00778B`, corail `#E96148`, sauge `#82C4A8` et blanc `#FFFFFF`.
+**Gestionnaire de mots de passe auto-hébergé · Symfony 7.4 · Chrome / Edge**
 
-> **Prototype non audité : ne pas l'utiliser pour conserver de vrais identifiants professionnels en production.** Le chiffrement, l'authentification, la récupération des données, les partages et l'extension nécessitent encore une revue et des tests de sécurité de bout en bout.
+Datensis Stock est une application de gestion d'identifiants développée avec Symfony. Elle associe un coffre accessible depuis le navigateur à une extension Chrome / Edge sous forme de mini-fenêtre, sans avoir à ouvrir systématiquement le site principal.
 
-## Inclus dans ce ZIP
+> [!WARNING]
+> **Version de développement — projet non audité.** Ne pas utiliser en production pour conserver de vrais secrets professionnels avant une revue complète de sécurité, des tests de restauration et une validation du déploiement.
 
-- **Symfony 7.4 + Doctrine + Twig** : connexion, inscription, coffre et API pour les fiches.
-- Coffre chiffré côté navigateur, avec déverrouillage après la connexion au moyen du mot de passe principal. Les anciens coffres peuvent nécessiter une conversion avec leur ancienne phrase secrète.
-- Identifiants, notes, cartes, identités, clés SSH, favoris, dossiers, corbeille, générateur, import/export et **Send** (texte ou fichier).
-- Cockpit cabinet et Centre de sécurité : analyse indicative locale des doublons, mots de passe faibles, accès critiques, échéances, dossiers et responsables.
-- **2FA désactivée pour le développement** dans `config/services.yaml` (`app.vault_2fa_enabled: false`). Le code de vérification e-mail Brevo est conservé pour réactivation future.
-- **Vraie extension Chrome/Edge** dans `chrome-extension/`, avec popup attachée à l'icône, générateur local et liens vers le coffre. Les fiches sont gérées dans le site Symfony, pas encore dans la popup. Pas d'autoremplissage, pas de popup Safari native, pas de publication sur les magasins d'extensions.
-- Pas de bouton d'installation PWA dans le site : l'extension de barre d'outils est un module distinct.
+**Dépôt :** https://github.com/hugorouff/Datensis-stock.git
 
-## Installer sur un nouveau dossier (Windows, PowerShell)
+## Sommaire
 
-Pré-requis : PHP 8.2 ou supérieur (extension `pdo_sqlite` activée), Composer, Node.js uniquement pour les tests JavaScript.
+- [Fonctionnalités](#fonctionnalités)
+- [Prérequis](#prérequis)
+- [Installation locale](#installation-locale)
+- [Extension Chrome et Edge](#extension-chrome-et-edge)
+- [Sécurité et limites](#sécurité-et-limites)
+- [Mises à jour et migrations](#mises-à-jour-et-migrations)
+- [Tests](#tests)
+- [Documentation](#documentation)
 
-1. Décompresser l'archive dans un dossier de travail, par exemple `C:\Users\Hugo\Documents\bitwarden`.
-2. Dans ce dossier, lancer :
+## Fonctionnalités
+
+| Module | Capacités décrites dans la version fournie |
+| --- | --- |
+| Coffre | Identifiants, notes, cartes, identités, clés SSH, favoris et dossiers |
+| Gestion | Création, modification, corbeille, restauration, duplication et recherche |
+| Outils | Générateur de mots de passe, import/export, Send de texte ou fichier via le site |
+| Organisation | Étiquettes, responsables, échéances de revue et Centre d'actions (`/actions`) |
+| Cabinet | Cockpit et Centre de sécurité avec indicateurs locaux et contrôles déclaratifs |
+| Extension | Mini-coffre Chrome/Edge : connexion, consultation, édition, recherche, copie et générateur |
+
+Les partages sont **nominatifs et en lecture seule** selon la documentation du projet. Il n'y a pas de coffre commun ni de rotation automatique des mots de passe des services externes.
+
+### Interface
+
+Palette utilisée par Datensis Stock : bleu pétrole `#00778B`, corail `#E96148`, sauge `#82C4A8` et blanc `#FFFFFF`.
+
+## Prérequis
+
+- PHP **8.2+**, avec `pdo_sqlite` ;
+- Composer ;
+- Git ;
+- Node.js uniquement pour certains tests JavaScript ;
+- navigateur Chrome ou Edge pour l'extension.
+
+## Installation locale
+
+### 1. Récupérer le projet
 
 ```powershell
+git clone https://github.com/hugorouff/Datensis-stock.git
+cd Datensis-stock
 composer install
+```
+
+### 2. Configurer Symfony
+
+Copier le fichier d'environnement local :
+
+```powershell
 Copy-Item .env .env.local
 ```
 
-3. Ouvrir `.env.local`, **remplacer `APP_SECRET` par un secret aléatoire privé**, et vérifier la connexion SQLite :
+Adapter `.env.local` (ne pas publier ce fichier) :
 
 ```dotenv
 APP_ENV=dev
 APP_DEBUG=1
+APP_SECRET=REMPLACER_PAR_UN_SECRET_ALEATOIRE
 DATABASE_URL="sqlite:///%kernel.project_dir%/var/data.db"
 ALLOW_REGISTRATION=1
 MAILER_DSN=null://null
+DEFAULT_URI=http://127.0.0.1:8001
 ```
 
-4. Dans le **même** terminal, si Windows force encore une ancienne connexion PostgreSQL :
+> **Attention :** le guide technique associé signale que certaines versions de `config/packages/doctrine.yaml` imposent SQLite directement. Vérifier ce fichier : dans ce cas, modifier `DATABASE_URL` seul ne changera pas la base réellement utilisée.
+
+### 3. Préparer SQLite
 
 ```powershell
-$env:DATABASE_URL = 'sqlite:///%kernel.project_dir%/var/data.db'
 php bin/console cache:clear
 php bin/console doctrine:migrations:migrate --no-interaction
+```
+
+Avant de lancer une migration sur un projet déjà utilisé, **sauvegarder `var/data.db`** et vérifier la connexion réellement sélectionnée par Doctrine.
+
+### 4. Lancer le serveur local
+
+```powershell
 php -S 127.0.0.1:8001 -t public public/router.php
 ```
 
-5. Ouvrir `http://127.0.0.1:8001/register` pour créer un compte, puis `/login`.
+Si `public/router.php` n'est pas présent dans la version du dépôt, utiliser le serveur Symfony CLI (`symfony server:start`) ou une configuration PHP adaptée.
 
-**Attention :** aucune base de données, aucun secret utilisateur, aucun répertoire `vendor/` ou `.env.local` n'est livré avec le ZIP. Ils sont générés localement.
+Ouvrir `http://127.0.0.1:8001/register` pour créer un compte, puis `http://127.0.0.1:8001/login`.
 
-## Mettre à jour un projet déjà utilisé
+## Extension Chrome et Edge
 
-1. **Arrêter le serveur et sauvegarder** le dossier existant, en particulier `var/data.db`, `.env.local` et `composer.lock`.
-2. Extraire les nouveaux fichiers à la racine du projet existant. Ne **pas** effacer `var/`, `vendor/`, `.env.local`, `composer.lock` ou les fichiers non inclus dans cette archive.
-3. Installer les dépendances nécessaires avec Composer ; vérifier avant de lancer une migration que `DATABASE_URL` cible **la même base SQLite existante**.
-4. Exécuter `php bin/console cache:clear` puis `php bin/console doctrine:migrations:migrate --no-interaction`.
-5. Si le site demande de convertir un ancien coffre, disposer de l'ancienne phrase secrète et conserver une sauvegarde avant conversion.
+Le dossier `chrome-extension/` contient l'extension Manifest V3.
 
-## Installer l'extension Chrome / Edge
-
-1. Démarrer le site Symfony.
+1. Démarrer l'application Symfony.
 2. Ouvrir `chrome://extensions` ou `edge://extensions`.
-3. Activer le **mode développeur** ; cliquer sur **Charger l'extension non empaquetée**.
-4. Sélectionner le dossier `chrome-extension/` contenant `manifest.json` et épingler l'extension.
-5. Dans l'onglet Réglages de sa popup, conserver `http://127.0.0.1:8001` en local. En production, utiliser une URL HTTPS.
+3. Activer le **mode développeur** pour l'installation locale.
+4. Cliquer sur **Charger l'extension non empaquetée**.
+5. Sélectionner `chrome-extension/`, puis épingler l'extension.
+6. Configurer l'adresse serveur dans la popup : `http://127.0.0.1:8001` en local, HTTPS pour un serveur distant.
 
-Cette procédure installe la **popup de barre d'outils**, pas une PWA. La publication dans les magasins d'extensions sera nécessaire pour permettre l'installation en un clic.
+La popup permet notamment de consulter et rechercher les fiches, copier ou révéler un mot de passe, ajouter/modifier une fiche, utiliser les favoris et générer des mots de passe. Le filtrage par domaine s'appuie sur l'autorisation `activeTab`.
 
-## Tests du code livrés
+**Limites documentées :** l'extension n'est pas publiée dans les boutiques ; l'installation sans mode développeur nécessite une distribution officielle ou administrée. La version décrite ne prend pas encore en charge le remplissage automatique sur les pages visitées, les Send de fichiers dans la popup ou la 2FA depuis l'extension. Pas de popup Safari native annoncée.
+
+## Sécurité et limites
+
+### Chiffrement et sessions
+
+La documentation fournie décrit :
+
+- Chiffrement local des fiches avec **AES-GCM** et dérivation de clé **Argon2id** pour les nouveaux coffres ;
+- Prise en charge d'anciens coffres PBKDF2-SHA256 et migration lors du déverrouillage depuis le site ;
+- Hachage des mots de passe de connexion côté Symfony ;
+- Jeton d'extension à durée limitée, stocké en mémoire dans la popup ;
+- Verrouillage de l'extension à la fermeture de la popup et verrouillage du coffre web au changement d'onglet ;
+- **2FA désactivée en développement**, configuration conservée pour une réactivation future.
+
+Ces caractéristiques sont **décrites dans les documents du projet, pas vérifiées par un audit indépendant**. Un verrouillage de l'interface n'équivaut pas à un effacement garanti de la mémoire du navigateur. Le presse-papiers reste un canal externe.
+
+### SQLite et hébergement
+
+SQLite convient au développement local, sous réserve de protéger les fichiers et les sauvegardes. Sur Scalingo, le système de fichiers des conteneurs est éphémère : **ne pas considérer `var/data.db` comme un stockage de production persistant**. Une stratégie de stockage durable et de restauration doit être définie avant une mise en production.
+
+Ne jamais pousser vers GitHub les fichiers `.env.local`, `var/data.db`, les exports de coffres ou des secrets réels.
+
+## Mises à jour et migrations
+
+Pour un projet déjà utilisé :
+
+1. Arrêter l'application et sauvegarder `var/data.db`, `.env.local` et la version du code.
+2. Récupérer la nouvelle version du dépôt sans écraser les données locales.
+3. Vérifier les paramètres Doctrine et les changements de migration.
+4. Installer les dépendances : `composer install`.
+5. Lancer `php bin/console doctrine:migrations:migrate --no-interaction` après vérification de la sauvegarde.
+6. Tester la connexion, le déverrouillage, les fiches et l'extension.
+
+La migration `Version20261103000100.php` est mentionnée dans la documentation fournie pour le suivi de `vault_kdf_version`. Les anciens coffres peuvent demander une conversion depuis le site. Le guide joint décrit séparément la **migration SQLite → PostgreSQL sur Scalingo** : elle est facultative pour le travail local et nécessite un outil d'import des données, pas seulement les migrations Doctrine.
+
+## Tests
+
+Si les fichiers correspondants existent dans le dépôt :
 
 ```powershell
 php -d zend.assertions=1 -d assert.exception=1 tests/security-smoke.php
@@ -76,61 +156,20 @@ node tests/cockpit.test.cjs
 node tests/security-center.test.cjs
 ```
 
-Les tests ciblés et les contrôles de syntaxe ont passé dans l'environnement de préparation ; il reste à tester l'installation Windows, la migration avec vos données, le login et la popup dans votre navigateur.
+Ces commandes sont issues du README fourni ; leur succès n'a pas été revérifié sur cette version du dépôt.
 
-## Documentation complémentaire
+## Documentation
 
-- `GUIDE-EXTENSION-POPUP.md` : vraie popup Chrome/Edge et différences avec une PWA.
-- `GUIDE-MISE-A-JOUR-ML2C.md` : fonctions métier et palette.
-- `GUIDE-BREVO.md` : préparation de la 2FA e-mail, actuellement désactivée.
-- `SECURITY.md` : limites et précautions de sécurité.
+Documents mentionnés dans le projet (selon leur disponibilité dans le dépôt) :
 
-## Nouveautés « Centre d’actions » (octobre 2026)
+- `SECURITY.md` : sécurité et limites ;
+- `GUIDE-EXTENSION-MINI-COFFRE.md` : installation de la popup ;
+- `GUIDE-EXTENSION-DEPLOIEMENT-ENTREPRISE.md` : distribution administrée ;
+- `GUIDE-EXTENSION-POPUP.md` : fonctionnement de l'extension ;
+- `GUIDE-BREVO.md` : préparation de la 2FA e-mail ;
+- `GUIDE-MISE-A-JOUR-ML2C.md` : historique du projet ;
+- **Guide de migration SQLite → PostgreSQL sur Scalingo** : procédure de bascule et sauvegarde.
 
-- Nouvelle URL `/actions` accessible depuis le site et la popup Chrome / Edge.
-- Détection locale des revues en retard, accès sans responsable, accès critiques sans 2FA déclarée, passations à revoir et clients manquants.
-- Liste de travail filtrable avec ouverture de fiche et validation *déclarative* d’une revue.
-- Vue par dossier client, étiquettes de classement, dernier historique local consultable.
-- Étiquettes et prochaine date de revue ajoutées dans le **contenu chiffré de chaque fiche** (aucune migration SQL).
-- Duplication rapide d’une fiche (vérifier l’élément copié avant d’enregistrer) et recherche par étiquettes.
-- Durée de verrouillage personnalisable sur l’appareil : 1/3/5/10/15 min, en plus du verrouillage au changement d’onglet.
-- Raccourcis clavier `/`, `N`, `Alt+1`, `Alt+2`.
-- Mise à jour de la popup : raccourci Centre d’actions.
+---
 
-**La publication d’une extension ou son installation forcée nécessite une action administrateur externe** ; consulter `GUIDE-EXTENSION-DEPLOIEMENT-ENTREPRISE.md`. Le mode développeur n’est pas activable depuis le site.
-
-**Attention :** les analyses sont des aides manuelles ; les partages entre comptes sont nominatifs et en lecture seule, sans coffre commun ni rotation automatique des mots de passe externes. Le projet n’a pas fait l’objet d’un audit certifié.
-
-## Extension mini-coffre dans la barre d'outils (version 1.0.0)
-
-L'extension `chrome-extension/` n'est **pas** une PWA et ne se contente plus d'ouvrir le site.
-En cliquant sur son icone Chrome/Edge, une popup permet maintenant :
-
-- de se connecter avec l'adresse e-mail et le **mot de passe principal** ;
-- de retrouver, chercher, filtrer et consulter les **identifiants, notes, cartes, identites et cles SSH** ;
-- de reveler et copier le mot de passe, de modifier/ajouter une fiche, de la mettre en favori, de la mettre a la corbeille ou de la restaurer ;
-- de generer un mot de passe localement ;
-- de gerer les **Send de texte** (creer/copier le lien/activer/desactiver/supprimer) ;
-- de filtrer les identifiants du domaine ouvert, via `activeTab` uniquement.
-
-**Securite et limites :** les nouveaux coffres utilisent Argon2id (3 passes, 64 Mio) pour deriver la cle, puis AES-GCM localement. Les anciens coffres PBKDF2-SHA256 (600 000 iterations) restent lisibles; leur migration vers Argon2id est effectuee au prochain deverrouillage depuis le site, pas depuis l'extension. Le serveur ne voit que des enveloppes chiffrees. Les mots de passe de connexion sont haches avec Argon2id par Symfony; les anciens hashes sont verifies puis migres lors d'une connexion reussie. Le jeton de connexion (10 minutes maximum) est stocke sous forme de hash sur le serveur, uniquement en memoire dans la popup, jamais dans `chrome.storage.local`. L'extension se verrouille quand sa popup est fermee : il faudra donc **se reconnecter a chaque nouvelle ouverture**. Le presse-papiers est un canal externe non chiffre. Le remplissage automatique sur les pages visitees, la gestion Send de fichiers et l'activation 2FA depuis l'extension ne sont pas encore pris en charge. Si la 2FA est reactivee dans Symfony, l'API extension refuse l'authentification : ne pas la contourner.
-
-La migration `Version20261103000100.php` ajoute `vault_kdf_version`; les coffres existants sont marques PBKDF2 et convertis par le navigateur lors de leur prochain deverrouillage sur le site.
-
-**Mise a jour depuis ML2C Vault Plus** : sauvegarder `var/data.db` et `.env.local`, copier les fichiers du ZIP dans le projet et executer `php bin/console doctrine:migrations:migrate --no-interaction`. Ne jamais supprimer la base actuelle pour appliquer la mise a jour.
-
-Voir `GUIDE-EXTENSION-MINI-COFFRE.md` pour les etapes d'installation et la configuration du serveur distant.
-
-## Connexion = déverrouillage et verrouillage à la sortie (correctif 28/10/2026)
-
-- En entrant ses identifiants sur `/login`, l'utilisateur authentifie son compte et déverrouille automatiquement son coffre **avec ce même mot de passe**, sans étape supplémentaire. Un coffre ancien chiffré avec une phrase différente peut demander une **conversion unique**.
-- Dès que le navigateur masque l'onglet (`visibilitychange`), quitte ou recharge la page (`pagehide`), le coffre perd sa référence à la clé locale et supprime les listes déchiffrées de l'interface. Le retour via l'historique (`pageshow` et BFCache) reste verrouillé.
-- Une opération de dérivation ou de déchiffrement commencée avant le changement d'onglet ne peut pas rouvrir le coffre : vérification d'un ticket de session après les opérations asynchrones.
-- La navigation entre les rubriques internes (Coffre, Send, Cockpit, etc.) est gérée dans la **même page** et **ne verrouille pas** : elle ne quitte pas le coffre.
-- Après un changement d'onglet, ressaisir le mot de passe principal sur l'écran verrouillé. Il n'est pas conservé dans un cookie ni dans `localStorage`/`sessionStorage`.
-- L'extension a une session mémoire propre : la fermeture de sa popup verrouille l'extension indépendamment du site.
-- Un verrouillage client **ne déconnecte pas forcément la session Symfony** : le serveur peut rester authentifié, mais les données locales déchiffrées sont supprimées. Cela ne garantit pas l'effacement physique des données dans la mémoire du navigateur.
-
-Mise à jour : remplacer les fichiers du correctif, vider le cache Symfony puis recharger le navigateur / extension. **Aucune migration SQL.**
-#   D a t e n s i s - s t o c k  
- 
+**Datensis Stock** — Application Symfony auto-hébergée, actuellement en développement.
